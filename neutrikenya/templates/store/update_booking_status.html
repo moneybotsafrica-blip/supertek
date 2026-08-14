@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Status - Booking #{{ booking.id }} - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-edit me-2"></i>Update Booking Status</h2>
+                    <p class="text-muted mb-0">Booking #{{ booking.id }} - {{ booking.service.name }}</p>
+                </div>
+                <a href="{% url 'store:technician_admin_dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Booking Summary -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Booking Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Customer:</strong> {{ booking.customer.get_full_name }}</p>
+                            <p class="mb-1"><strong>Phone:</strong> {{ booking.phone }}</p>
+                            <p class="mb-1"><strong>Address:</strong> {{ booking.address }}</p>
+                            <p class="mb-0"><strong>City:</strong> {{ booking.city }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Service:</strong> {{ booking.service.name }}</p>
+                            <p class="mb-1"><strong>Scheduled Date:</strong> {{ booking.scheduled_date|date:"F j, Y H:i" }}</p>
+                            <p class="mb-1"><strong>Current Status:</strong> 
+                                <span class="badge bg-{% if booking.status == 'completed' %}success{% elif booking.status == 'in_progress' %}info{% elif booking.status == 'assigned' %}primary{% else %}warning{% endif %}">
+                                    {{ booking.get_status_display }}
+                                </span>
+                            </p>
+                            <p class="mb-0"><strong>Payment Status:</strong> 
+                                <span class="badge bg-{% if booking.payment_status == 'paid' %}success{% elif booking.payment_status == 'pending' %}warning{% else %}secondary{% endif %}">
+                                    {{ booking.get_payment_status_display }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Update Status Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Update Status</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="status" class="form-label">New Status</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="">Select Status</option>
+                                {% for value, label in status_choices %}
+                                    <option value="{{ value }}" {% if booking.status == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes (Optional)</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Add any notes about this job...">{{ booking.notes }}</textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Update Status</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

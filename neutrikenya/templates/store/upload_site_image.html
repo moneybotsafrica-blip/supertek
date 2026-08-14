@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Site Images - Booking #{{ booking.id }} - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-camera me-2"></i>Upload Site Images</h2>
+                    <p class="text-muted mb-0">Booking #{{ booking.id }} - {{ booking.service.name }}</p>
+                </div>
+                <a href="{% url 'store:booking_details' booking.id %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Booking
+                </a>
+            </div>
+
+            <!-- Booking Summary -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Booking Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Customer:</strong> {{ booking.customer.get_full_name }}</p>
+                            <p class="mb-1"><strong>Phone:</strong> {{ booking.phone }}</p>
+                            <p class="mb-0"><strong>Address:</strong> {{ booking.address }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Service:</strong> {{ booking.service.name }}</p>
+                            <p class="mb-1"><strong>Scheduled:</strong> {{ booking.scheduled_date|date:"F j, Y H:i" }}</p>
+                            <p class="mb-0"><strong>Status:</strong> {{ booking.get_status_display }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-upload me-2"></i>Upload New Image</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Select Image</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                            <small class="text-muted">Supported formats: JPG, PNG, GIF</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="caption" class="form-label">Caption (Optional)</label>
+                            <input type="text" class="form-control" id="caption" name="caption" placeholder="Add a description for this image">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-upload me-2"></i>Upload Image
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

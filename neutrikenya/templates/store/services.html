@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Our Services - Installations & Repairs - Mustek East Africa{% endblock %}
+
+{% block content %}
+<!-- Services Hero Section -->
+{% if hero_slides %}
+<div id="servicesHeroCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        {% for slide in hero_slides %}
+        <button type="button" data-bs-target="#servicesHeroCarousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %} aria-label="Slide {{ forloop.counter }}"></button>
+        {% endfor %}
+    </div>
+    <div class="carousel-inner">
+        {% for slide in hero_slides %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <div class="position-relative" style="height: 500px; overflow: hidden;">
+                <img src="{{ slide.image.url }}" alt="{{ slide.alt_text|default:slide.title }}" class="w-100 h-100" style="object-fit: contain; object-position: center;">
+                <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(0, 0, 0, 0.5);">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <h1 class="display-4 fw-bold text-white mb-4">{{ slide.title }}</h1>
+                                {% if slide.subtitle %}
+                                <p class="lead text-white mb-4">{{ slide.subtitle }}</p>
+                                {% endif %}
+                                {% if slide.description %}
+                                <p class="text-white mb-4" style="opacity: 0.9;">{{ slide.description }}</p>
+                                {% else %}
+                                <p class="text-white mb-4" style="opacity: 0.9;">Expert technicians for all your equipment needs. Power backup, refrigeration, electrical, and more.</p>
+                                {% endif %}
+                                {% if slide.link_url %}
+                                <a href="{{ slide.link_url }}" class="btn btn-light btn-lg fw-bold" style="color: #1e4d7c;">View Our Services</a>
+                                {% else %}
+                                <a href="#services" class="btn btn-light btn-lg fw-bold" style="color: #1e4d7c;">View Our Services</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#servicesHeroCarousel" data-bs-slide="prev" style="width: 50px;">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#servicesHeroCarousel" data-bs-slide="next" style="width: 50px;">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+{% else %}
+<!-- Fallback static hero section if no slides -->
+<div class="position-relative mb-4" style="height: 500px; overflow: hidden;">
+    <img src="/static/images/camping-gear.jpg" alt="Professional Services" class="w-100 h-100" style="object-fit: contain; object-position: center;">
+    <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(0, 0, 0, 0.5);">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold text-white mb-4">Professional Installation & Repair Services</h1>
+                    <p class="lead text-white mb-4">Expert technicians for all your equipment needs. Power backup, refrigeration, electrical, and more.</p>
+                    <p class="text-white mb-4" style="opacity: 0.9;">Professional installation and repair services for all your equipment needs. Our certified technicians ensure quality workmanship and reliable solutions.</p>
+                    <a href="#services" class="btn btn-light btn-lg fw-bold" style="color: #1e4d7c;">View Our Services</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="container py-5" id="services">
+    <div class="row">
+        {% for service in services %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm service-card">
+                {% if service.image %}
+                <div class="card-img-top-container" style="height: 200px; overflow: hidden;">
+                    <img src="{{ service.image.url }}" class="card-img-top" alt="{{ service.name }}" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="fas fa-cogs fa-4x text-secondary"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <span class="badge bg-primary mb-2">{{ service.get_service_type_display }}</span>
+                    <h5 class="card-title">{{ service.name }}</h5>
+                    <p class="card-text text-muted small">{{ service.description|truncatewords:20 }}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div>
+                            <span class="fw-bold text-primary">KES {{ service.base_price|floatformat:0 }} + VAT</span>
+                            {% if service.callout_fee > 0 %}
+                            <br><small class="text-muted">+ Callout Fee: KES {{ service.callout_fee|floatformat:0 }}</small>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'store:book_service' service.slug %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-calendar-check me-1"></i> Book Service
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Service Information Section -->
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-user-check fa-3x text-primary mb-3"></i>
+                    <h5>Expert Technicians</h5>
+                    <p class="text-muted">Our technicians are certified and experienced in handling all types of equipment.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-clock fa-3x text-primary mb-3"></i>
+                    <h5>Quick Response</h5>
+                    <p class="text-muted">We provide fast and reliable service to get your equipment running quickly.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                    <h5>Warranty Support</h5>
+                    <p class="text-muted">All our services come with warranty coverage for your peace of mind.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.service-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.service-card .card-img-top {
+    border-bottom: 3px solid #007bff;
+}
+
+.card-img-top-container {
+    position: relative;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.carousel-item {
+    transition: transform 0.6s ease-in-out;
+}
+
+.hero-image-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-image {
+    transition: transform 0.5s ease;
+    transform: scale(0.9);
+}
+
+.hero-image:hover {
+    transform: scale(1);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-rotate carousel every 5 seconds if there are multiple slides
+    const carousel = document.getElementById('servicesHeroCarousel');
+    if (carousel) {
+        const carouselInstance = new bootstrap.Carousel(carousel, {
+            interval: 5000,
+            wrap: true,
+            keyboard: true
+        });
+    }
+});
+</script>
+{% endblock %}

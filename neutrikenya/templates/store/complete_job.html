@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Complete Job - Booking #{{ booking.id }} - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-check-circle me-2"></i>Complete Job</h2>
+                    <p class="text-muted mb-0">Booking #{{ booking.id }} - {{ booking.service.name }}</p>
+                </div>
+                <a href="{% url 'store:technician_admin_dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Booking Summary -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Job Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Customer:</strong> {{ booking.customer.get_full_name }}</p>
+                            <p class="mb-1"><strong>Phone:</strong> {{ booking.phone }}</p>
+                            <p class="mb-1"><strong>Address:</strong> {{ booking.address }}</p>
+                            <p class="mb-0"><strong>City:</strong> {{ booking.city }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Service:</strong> {{ booking.service.name }}</p>
+                            <p class="mb-1"><strong>Scheduled Date:</strong> {{ booking.scheduled_date|date:"F j, Y H:i" }}</p>
+                            <p class="mb-1"><strong>Current Status:</strong> 
+                                <span class="badge bg-{% if booking.status == 'completed' %}success{% elif booking.status == 'in_progress' %}info{% elif booking.status == 'assigned' %}primary{% else %}warning{% endif %}">
+                                    {{ booking.get_status_display }}
+                                </span>
+                            </p>
+                            <p class="mb-0"><strong>Payment Status:</strong> 
+                                <span class="badge bg-{% if booking.payment_status == 'paid' %}success{% elif booking.payment_status == 'pending' %}warning{% else %}secondary{% endif %}">
+                                    {{ booking.get_payment_status_display }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirmation -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                        <h4>Mark Job as Completed?</h4>
+                        <p class="text-muted">This will update the booking status to "completed" and update your performance metrics.</p>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Note:</strong> Once marked as completed, the customer will be notified and payment processing will be initiated if not already paid.
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="{% url 'store:technician_admin_dashboard' %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check me-2"></i>Complete Job
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

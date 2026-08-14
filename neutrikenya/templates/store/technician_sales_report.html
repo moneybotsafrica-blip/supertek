@@ -1,0 +1,225 @@
+{% extends 'technician_base.html' %}
+{% load calendar_tags %}
+
+{% block title %}Sales Report - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-user-tie me-2"></i>Technician Panel</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-2" style="width: 80px; height: 80px;">
+                            <i class="fas fa-user fa-3x text-secondary"></i>
+                        </div>
+                        <h6>{{ technician.user.get_full_name }}</h6>
+                        <p class="text-muted small mb-0">{{ technician.phone }}</p>
+                    </div>
+                    <hr>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'store:technician_admin_dashboard' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <a href="{% url 'store:technician_calendar' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-calendar-alt me-2"></i>Calendar
+                        </a>
+                        <a href="{% url 'store:technician_quotations' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-file-invoice-dollar me-2"></i>My Quotations
+                        </a>
+                        <a href="{% url 'store:technician_vehicles' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-truck me-2"></i>Vehicle Management
+                        </a>
+                        <a href="{% url 'store:technician_payments' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-credit-card me-2"></i>Payments
+                        </a>
+                        <a href="{% url 'store:technician_sales_report' %}" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-chart-line me-2"></i>Sales Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-chart-line me-2"></i>Sales Report</h2>
+                <div>
+                    <button onclick="window.print()" class="btn btn-outline-primary">
+                        <i class="fas fa-print me-2"></i>Print Report
+                    </button>
+                    <a href="{% url 'store:technician_admin_dashboard' %}" class="btn btn-outline-secondary ms-2">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Bookings</h6>
+                            <h3 class="display-5">{{ total_bookings }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="card-title">Completed</h6>
+                            <h3 class="display-5">{{ completed_bookings }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="card-title">Pending</h6>
+                            <h3 class="display-5">{{ pending_bookings }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="card-title">Total Revenue</h6>
+                            <h3 class="display-5">KES {{ total_revenue|floatformat:0 }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-star me-2"></i>Performance Metrics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="mb-1"><strong>Average Rating:</strong></p>
+                                    <div class="text-warning mb-3">
+                                        {% for i in avg_rating|floatformat:0 %}<i class="fas fa-star"></i>{% endfor %}
+                                        <span class="text-muted">({{ avg_rating }}/5.0)</span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <p class="mb-1"><strong>Total Hours:</strong></p>
+                                    <h4 class="text-primary">{{ total_hours|floatformat:1 }} hrs</h4>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="mb-1"><strong>Completion Rate:</strong></p>
+                                    <h4 class="text-success">
+                                        {% if total_bookings > 0 %}
+                                            {{ completed_bookings|multiply:100|divide:total_bookings|floatformat:1 }}%
+                                        {% else %}
+                                            0%
+                                        {% endif %}
+                                    </h4>
+                                </div>
+                                <div class="col-6">
+                                    <p class="mb-1"><strong>Average per Job:</strong></p>
+                                    <h4 class="text-info">
+                                        {% if completed_bookings > 0 %}
+                                            KES {{ total_revenue|divide:completed_bookings|floatformat:0 }}
+                                        {% else %}
+                                            KES 0
+                                        {% endif %}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-cogs me-2"></i>Service Breakdown</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if service_breakdown %}
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Service</th>
+                                            <th class="text-end">Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for service in service_breakdown %}
+                                        <tr>
+                                            <td>{{ service.service__name }}</td>
+                                            <td class="text-end">{{ service.count }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <p class="text-muted text-center py-4">No service data available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Bookings -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Bookings</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_bookings %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Service</th>
+                                    <th>Customer</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in recent_bookings %}
+                                <tr>
+                                    <td>#{{ booking.id }}</td>
+                                    <td>{{ booking.service.name }}</td>
+                                    <td>{{ booking.customer.get_full_name }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if booking.status == 'completed' %}success{% elif booking.status == 'in_progress' %}info{% elif booking.status == 'assigned' %}primary{% else %}warning{% endif %}">
+                                            {{ booking.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ booking.created_at|date:"M d, Y" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No recent bookings</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

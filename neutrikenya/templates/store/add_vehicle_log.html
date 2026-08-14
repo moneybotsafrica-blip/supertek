@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Vehicle Log - {{ vehicle.registration_number }} - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-plus-circle me-2"></i>Add Mileage Log</h2>
+                    <p class="text-muted mb-0">{{ vehicle.registration_number }} - {{ vehicle.make }} {{ vehicle.model }}</p>
+                </div>
+                <a href="{% url 'store:vehicle_details' vehicle.id %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Vehicle
+                </a>
+            </div>
+
+            <!-- Vehicle Summary -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Vehicle Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Registration:</strong> {{ vehicle.registration_number }}</p>
+                            <p class="mb-1"><strong>Make/Model:</strong> {{ vehicle.make }} {{ vehicle.model }}</p>
+                            <p class="mb-0"><strong>Year:</strong> {{ vehicle.year }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Current Mileage:</strong> {{ vehicle.get_current_mileage }} km</p>
+                            <p class="mb-0"><strong>Total Logs:</strong> {{ vehicle.logs.count }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Log Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Add New Log</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="starting_mileage" class="form-label">Starting Mileage (km)</label>
+                                <input type="number" class="form-control" id="starting_mileage" name="starting_mileage" 
+                                       value="{{ vehicle.get_current_mileage }}" min="0" required>
+                                <small class="text-muted">Current mileage: {{ vehicle.get_current_mileage }} km</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="ending_mileage" class="form-label">Ending Mileage (km)</label>
+                                <input type="number" class="form-control" id="ending_mileage" name="ending_mileage" 
+                                       min="0" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="fuel_consumed" class="form-label">Fuel Consumed (Liters)</label>
+                                <input type="number" class="form-control" id="fuel_consumed" name="fuel_consumed" 
+                                       step="0.01" min="0" placeholder="Optional">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="notes" class="form-label">Notes</label>
+                                <input type="text" class="form-control" id="notes" name="notes" placeholder="Optional notes">
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Distance will be calculated automatically:</strong> Ending Mileage - Starting Mileage
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Add Log Entry</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Clock Out - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-clock me-2"></i>Clock Out</h2>
+                <a href="{% url 'store:technician_admin_dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Current Session Info -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Current Session</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Clock In Time:</strong> {{ active_log.clock_in_time|date:"H:i" }}</p>
+                            <p class="mb-1"><strong>Date:</strong> {{ active_log.date|date:"F j, Y" }}</p>
+                            {% if active_log.booking %}
+                            <p class="mb-0"><strong>Job:</strong> {{ active_log.booking.service.name }}</p>
+                            {% else %}
+                            <p class="mb-0"><strong>Job:</strong> General Shift</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Duration:</strong> <span id="duration">Calculating...</span></p>
+                            <p class="mb-0"><strong>Technician:</strong> {{ active_log.technician.user.get_full_name }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clock Out Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-sign-out-alt me-2"></i>End Your Shift</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes (Optional)</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Add any notes about your shift..."></textarea>
+                        </div>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Clocking out will calculate your total hours worked for this session.
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fas fa-sign-out-alt me-2"></i>Clock Out Now
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Calculate and display duration
+const clockInTime = new Date("{{ active_log.clock_in_time|date:'c' }}");
+const durationElement = document.getElementById('duration');
+
+function updateDuration() {
+    const now = new Date();
+    const diff = now - clockInTime;
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    durationElement.textContent = `${hours}h ${minutes}m`;
+}
+
+updateDuration();
+setInterval(updateDuration, 60000); // Update every minute
+</script>
+{% endblock %}

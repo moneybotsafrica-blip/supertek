@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Quotation - Booking #{{ booking.id }} - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2><i class="fas fa-file-invoice-dollar me-2"></i>Create Quotation</h2>
+                    <p class="text-muted mb-0">Booking #{{ booking.id }} - {{ booking.service.name }}</p>
+                </div>
+                <a href="{% url 'store:technician_admin_dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Booking Summary -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Booking Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Customer:</strong> {{ booking.customer.get_full_name }}</p>
+                            <p class="mb-1"><strong>Phone:</strong> {{ booking.phone }}</p>
+                            <p class="mb-1"><strong>Address:</strong> {{ booking.address }}</p>
+                            <p class="mb-0"><strong>City:</strong> {{ booking.city }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Service:</strong> {{ booking.service.name }}</p>
+                            <p class="mb-1"><strong>Scheduled Date:</strong> {{ booking.scheduled_date|date:"F j, Y \a\t g:i A" }}</p>
+                            <p class="mb-0"><strong>Base Service Fee:</strong> KES {{ booking.service.base_price|floatformat:2 }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quotation Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Quotation Details</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="quotationForm">
+                        {% csrf_token %}
+                        
+                        <!-- Labor Cost -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="labor_cost" class="form-label">Labor Cost (KES) *</label>
+                                <input type="number" class="form-control" id="labor_cost" name="labor_cost" 
+                                       value="{{ booking.service.base_price }}" required min="0" step="0.01">
+                                <small class="text-muted">Base service fee: KES {{ booking.service.base_price|floatformat:2 }}</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="parts_cost" class="form-label">Parts Cost (KES) *</label>
+                                <input type="number" class="form-control" id="parts_cost" name="parts_cost" 
+                                       value="0" required min="0" step="0.01">
+                                <small class="text-muted">Total cost of spare parts</small>
+                            </div>
+                        </div>
+
+                        <!-- Quotation Items -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0"><i class="fas fa-list me-2"></i>Spare Parts / Items</h6>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="addItem()">
+                                    <i class="fas fa-plus me-1"></i>Add Item
+                                </button>
+                            </div>
+                            
+                            <div id="itemsContainer">
+                                <!-- Items will be added here dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mb-4">
+                            <label for="notes" class="form-label">Additional Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" 
+                                      placeholder="Enter any additional notes or terms..."></textarea>
+                        </div>
+
+                        <!-- Cost Summary -->
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-3">Cost Summary</h6>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Labor Cost:</span>
+                                    <span id="laborCostDisplay">KES {{ booking.service.base_price|floatformat:2 }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Parts Cost:</span>
+                                    <span id="partsCostDisplay">KES 0.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Subtotal:</span>
+                                    <span id="subtotalDisplay">KES {{ booking.service.base_price|floatformat:2 }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>VAT (16%):</span>
+                                    <span id="vatDisplay">KES {{ booking.service.base_price|floatformat:2 }}</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between fw-bold fs-5">
+                                    <span>Total Amount:</span>
+                                    <span class="text-primary" id="totalDisplay">KES {{ booking.service.base_price|floatformat:2 }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success btn-lg flex-grow-1">
+                                <i class="fas fa-check me-2"></i>Create Quotation
+                            </button>
+                            <a href="{% url 'store:technician_admin_dashboard' %}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let itemCount = 0;
+
+function addItem() {
+    itemCount++;
+    const itemHtml = `
+        <div class="card mb-3 item-card" id="item-${itemCount}">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label small">Product *</label>
+                        <select class="form-control item-product" name="item_product[]" onchange="fillProductDetails(${itemCount})">
+                            <option value="">-- Select Product --</option>
+                            {% for product in products %}
+                            <option value="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.price }}">
+                                {{ product.name }} (KES {{ product.price }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label small">Description *</label>
+                        <input type="text" class="form-control item-description" name="item_description[]" 
+                               placeholder="e.g., Replacement Battery" required>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label class="form-label small">Quantity *</label>
+                        <input type="number" class="form-control item-quantity" name="item_quantity[]" 
+                               value="1" required min="1" onchange="updateTotals()">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label class="form-label small">Unit Price (KES) *</label>
+                        <input type="number" class="form-control item-price" name="item_price[]" 
+                               placeholder="0.00" required min="0" step="0.01" onchange="updateTotals()">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10 mb-3">
+                        <label class="form-label small">Total</label>
+                        <input type="text" class="form-control item-total" readonly value="0.00">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label class="form-label small">&nbsp;</label>
+                        <button type="button" class="btn btn-sm btn-outline-danger w-100" onclick="removeItem(${itemCount})">
+                            <i class="fas fa-trash me-1"></i>Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.getElementById('itemsContainer').insertAdjacentHTML('beforeend', itemHtml);
+}
+
+function fillProductDetails(itemId) {
+    const productSelect = document.querySelector(`#item-${itemId} .item-product`);
+    const descriptionInput = document.querySelector(`#item-${itemId} .item-description`);
+    const priceInput = document.querySelector(`#item-${itemId} .item-price`);
+    
+    const selectedOption = productSelect.options[productSelect.selectedIndex];
+    if (selectedOption && selectedOption.value) {
+        descriptionInput.value = selectedOption.getAttribute('data-name');
+        priceInput.value = selectedOption.getAttribute('data-price');
+        updateTotals();
+    }
+}
+
+function removeItem(id) {
+    document.getElementById(`item-${id}`).remove();
+    updateTotals();
+}
+
+function updateTotals() {
+    const laborCost = parseFloat(document.getElementById('labor_cost').value) || 0;
+    const partsCost = parseFloat(document.getElementById('parts_cost').value) || 0;
+    
+    // Calculate items total
+    const quantities = document.querySelectorAll('.item-quantity');
+    const prices = document.querySelectorAll('.item-price');
+    const totals = document.querySelectorAll('.item-total');
+    
+    let itemsTotal = 0;
+    quantities.forEach((qty, index) => {
+        const q = parseFloat(qty.value) || 0;
+        const p = parseFloat(prices[index].value) || 0;
+        const total = q * p;
+        itemsTotal += total;
+        if (totals[index]) {
+            totals[index].value = total.toFixed(2);
+        }
+    });
+    
+    // Update parts cost with items total
+    document.getElementById('parts_cost').value = (partsCost + itemsTotal).toFixed(2);
+    
+    // Recalculate totals
+    const subtotal = laborCost + partsCost + itemsTotal;
+    const vat = subtotal * 0.16;
+    const total = subtotal + vat;
+    
+    document.getElementById('laborCostDisplay').textContent = `KES ${laborCost.toFixed(2)}`;
+    document.getElementById('partsCostDisplay').textContent = `KES ${(partsCost + itemsTotal).toFixed(2)}`;
+    document.getElementById('subtotalDisplay').textContent = `KES ${subtotal.toFixed(2)}`;
+    document.getElementById('vatDisplay').textContent = `KES ${vat.toFixed(2)}`;
+    document.getElementById('totalDisplay').textContent = `KES ${total.toFixed(2)}`;
+}
+
+// Add event listeners for labor cost changes
+document.getElementById('labor_cost').addEventListener('change', updateTotals);
+document.getElementById('parts_cost').addEventListener('change', updateTotals);
+
+// Initialize totals on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateTotals();
+});
+
+// Add one initial item
+addItem();
+</script>
+{% endblock %}

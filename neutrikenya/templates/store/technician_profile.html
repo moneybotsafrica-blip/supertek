@@ -1,0 +1,158 @@
+{% extends 'technician_base.html' %}
+
+{% block title %}My Profile - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-user-tie me-2"></i>Technician Panel</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-2" style="width: 80px; height: 80px;">
+                            <i class="fas fa-user fa-3x text-secondary"></i>
+                        </div>
+                        <h6>{{ technician.user.get_full_name }}</h6>
+                        <p class="text-muted small mb-0">{{ technician.phone }}</p>
+                    </div>
+                    <hr>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'store:technician_admin_dashboard' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <a href="{% url 'store:technician_calendar' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-calendar-alt me-2"></i>Calendar
+                        </a>
+                        <a href="{% url 'store:technician_quotations' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-file-invoice-dollar me-2"></i>My Quotations
+                        </a>
+                        <a href="{% url 'store:technician_vehicles' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-truck me-2"></i>Vehicle Management
+                        </a>
+                        <a href="{% url 'store:technician_payments' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-credit-card me-2"></i>Payments
+                        </a>
+                        <a href="{% url 'store:technician_sales_report' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-chart-line me-2"></i>Sales Report
+                        </a>
+                        <a href="{% url 'store:technician_profile' %}" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-user-cog me-2"></i>My Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-user-cog me-2"></i>My Profile</h2>
+                <a href="{% url 'store:technician_admin_dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Profile Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Profile</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="first_name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" 
+                                       value="{{ technician.user.first_name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" 
+                                       value="{{ technician.user.last_name }}" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ technician.user.email }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" id="phone" name="phone" 
+                                       value="{{ technician.phone }}" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="is_available" name="is_available" 
+                                       {% if technician.is_available %}checked{% endif %}>
+                                <label class="form-check-label" for="is_available">
+                                    Available for new assignments
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        <h6 class="mb-3">Skills & Services</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Select services you can perform:</label>
+                            <div class="row">
+                                {% for service in all_services %}
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="service_{{ service.id }}" 
+                                               name="skills" value="{{ service.id }}"
+                                               {% if service in technician.skills.all %}checked{% endif %}>
+                                        <label class="form-check-label" for="service_{{ service.id }}">
+                                            {{ service.name }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="alert alert-info">
+                                    <p class="mb-0"><strong>Rating:</strong> 
+                                        <span class="text-warning">
+                                            {% for i in technician.rating|floatformat:0 %}<i class="fas fa-star"></i>{% endfor %}
+                                        </span>
+                                        ({{ technician.rating }}/5.0)
+                                    </p>
+                                    <p class="mb-0"><strong>Total Jobs:</strong> {{ technician.total_jobs }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="alert alert-success">
+                                    <p class="mb-0"><strong>Assigned Vehicle:</strong> 
+                                        {% if technician.vehicles.first %}
+                                            {{ technician.vehicles.first.registration_number }}
+                                        {% else %}
+                                            None assigned
+                                        {% endif %}
+                                    </p>
+                                    <p class="mb-0"><strong>Member Since:</strong> {{ technician.created_at|date:"F j, Y" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

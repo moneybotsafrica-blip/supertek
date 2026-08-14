@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Order #{{ order.id }} - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <a href="{% url 'store:profile' %}?tab=orders" class="text-decoration-none text-dark">
+            <i class="fas fa-arrow-left me-2"></i> Back to Orders
+        </a>
+    </div>
+    
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h5 mb-0">Order #{{ order.id }}</h1>
+                <span class="badge 
+                    {% if order.status == 'pending' %}bg-warning
+                    {% elif order.status == 'processing' %}bg-info
+                    {% elif order.status == 'shipped' %}bg-primary
+                    {% elif order.status == 'delivered' %}bg-success
+                    {% else %}bg-secondary{% endif %}">
+                    {{ order.get_status_display }}
+                </span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5 class="h6 mb-3">Order Information</h5>
+                    <p class="mb-1"><strong>Order Date:</strong> {{ order.created_at|date:"F j, Y, g:i a" }}</p>
+                    <p class="mb-1"><strong>Payment Method:</strong> 
+                        {% if user.profile.default_payment_method == 'mpesa' %}
+                            M-Pesa
+                        {% elif user.profile.default_payment_method == 'card' %}
+                            Credit/Debit Card
+                        {% elif user.profile.default_payment_method == 'paypal' %}
+                            PayPal
+                        {% elif user.profile.default_payment_method == 'cash' %}
+                            Cash on Delivery
+                        {% else %}
+                            Not specified
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="h6 mb-3">Shipping Information</h5>
+                    <p class="mb-1"><strong>Name:</strong> {{ order.first_name }} {{ order.last_name }}</p>
+                    <p class="mb-1"><strong>Email:</strong> {{ order.email }}</p>
+                    <p class="mb-1"><strong>Phone:</strong> {{ order.phone }}</p>
+                    <p class="mb-1"><strong>Address:</strong> {{ order.address }}</p>
+                    <p class="mb-0"><strong>City:</strong> {{ order.city }}</p>
+                </div>
+            </div>
+            
+            <h5 class="h6 mb-3">Order Items</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 60%">Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if item.product.images.filter.exists %}
+                                        <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.name }}" style="width: 50px; height: 50px; object-fit: cover;" class="me-3">
+                                    {% else %}
+                                        <div class="bg-light me-3" style="width: 50px; height: 50px;"></div>
+                                    {% endif %}
+                                    <div>
+                                        <h6 class="mb-0">{{ item.product.name }}</h6>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>KES {{ item.price }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>KES {{ item.total_price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
+                            <td>KES {{ order.total_price }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Shipping:</strong></td>
+                            <td>KES 0.00</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                            <td><strong>KES {{ order.total_price }}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="h6 mb-3">Need Help With Your Order?</h5>
+                    <p class="text-muted">Our customer service team is here to help.</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'store:contact' %}" class="btn btn-outline-dark">
+                            <i class="fas fa-envelope me-2"></i> Contact Support
+                        </a>
+                        <a href="https://wa.me/254700000000" target="_blank" class="btn btn-success">
+                            <i class="fab fa-whatsapp me-2"></i> WhatsApp Support
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="h6 mb-3">Order Again</h5>
+                    <p class="text-muted">Loved your products? Order them again with one click!</p>
+                    <div class="d-grid">
+                        <a href="#" class="btn btn-dark">
+                            <i class="fas fa-redo me-2"></i> Reorder Same Items
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

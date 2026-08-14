@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - Booking #{{ booking.id }} - Mustek East Africa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; }
+            .card { border: none !important; box-shadow: none !important; }
+        }
+        .print-only { display: none; }
+        .company-header {
+            background: linear-gradient(135deg, #1e4d7c 0%, #153a5f 100%);
+            color: white;
+        }
+        .company-logo {
+            max-height: 80px;
+            max-width: 200px;
+        }
+        .invoice-header {
+            background-color: #f8f9fa;
+            border-left: 4px solid #1e4d7c;
+        }
+        .total-section {
+            background-color: #f8f9fa;
+            border-top: 2px solid #1e4d7c;
+        }
+        .signature-section {
+            border-top: 1px solid #dee2e6;
+            margin-top: 40px;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <div class="card shadow">
+            <!-- Header -->
+            <div class="card-body">
+                <div class="row company-header p-4 mb-4 rounded">
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center mb-2">
+                            {% if site_settings.logo %}
+                            <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" class="company-logo me-3">
+                            {% else %}
+                            <i class="fas fa-cogs fa-2x me-3"></i>
+                            {% endif %}
+                            <div>
+                                <h2 class="mb-1">{{ site_settings.site_name }}</h2>
+                                <p class="mb-0">Professional Installation & Repair Services</p>
+                            </div>
+                        </div>
+                        <small>{{ site_settings.address|default:"Nairobi, Kenya" }} | Phone: {{ site_settings.contact_phone|default:"+254 700 000 000" }} | Email: {{ site_settings.contact_email|default:"info@mustekea.co.ke" }}</small>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <h4 class="mb-0">INVOICE</h4>
+                        <small class="text-white-50">#INV-{{ booking.id }}</small>
+                    </div>
+                </div>
+
+                <!-- Invoice Details -->
+                <div class="invoice-header p-3 mb-4 rounded">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-2">Bill To:</h6>
+                            <p class="mb-1"><strong>{{ booking.customer.get_full_name }}</strong></p>
+                            <p class="mb-1">{{ booking.address }}</p>
+                            <p class="mb-1">{{ booking.city }}</p>
+                            <p class="mb-0"><strong>Phone:</strong> {{ booking.phone }}</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h6 class="fw-bold mb-2">Invoice Details:</h6>
+                            <p class="mb-1"><strong>Invoice Date:</strong> {{ booking.completed_at|date:"F j, Y" }}</p>
+                            <p class="mb-1"><strong>Service Date:</strong> {{ booking.scheduled_date|date:"F j, Y" }}</p>
+                            <p class="mb-1"><strong>Booking ID:</strong> #{{ booking.id }}</p>
+                            <p class="mb-0"><strong>Payment Status:</strong> 
+                                <span class="badge bg-success">PAID</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Details -->
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-2">Service Details</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Description</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-end">Unit Price (KES)</th>
+                                    <th class="text-end">Total (KES)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>{{ booking.service.name }}</strong><br>
+                                        <small class="text-muted">{{ booking.service.description }}</small>
+                                    </td>
+                                    <td class="text-center">1</td>
+                                    <td class="text-end">{{ booking.service.base_price|floatformat:2 }}</td>
+                                    <td class="text-end">{{ booking.service.base_price|floatformat:2 }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Totals -->
+                <div class="total-section p-4 rounded">
+                    <div class="row">
+                        <div class="col-md-6 offset-md-6">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span>KES {{ booking.service.base_price|floatformat:2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>VAT (16%):</span>
+                                <span id="vatDisplay">KES 0.00</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold fs-5">
+                                <span>Total Amount:</span>
+                                <span class="text-primary" id="totalDisplay">KES 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Information -->
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="fw-bold mb-2">Payment Information</h6>
+                    <p class="mb-1"><strong>Payment Method:</strong> M-Pesa</p>
+                    <p class="mb-1"><strong>Payment Date:</strong> {{ booking.completed_at|date:"F j, Y H:i" }}</p>
+                    <p class="mb-0"><strong>Transaction ID:</strong> {{ booking.mpesa_transaction.checkout_request_id|default:"N/A" }}</p>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="fw-bold mb-2">Terms and Conditions</h6>
+                    <ul class="small text-muted mb-0">
+                        <li>Payment is due upon completion of service</li>
+                        <li>All services carry a 30-day labor warranty</li>
+                        <li>Parts warranty as per manufacturer specifications</li>
+                        <li>This invoice serves as official receipt of payment</li>
+                    </ul>
+                </div>
+
+                <!-- Signature Section -->
+                <div class="signature-section">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="text-center">
+                                <p class="mb-4">__________________________</p>
+                                <p class="fw-bold">Technician Signature</p>
+                                <p class="small text-muted">{{ booking.technician.user.get_full_name }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-center">
+                                <p class="mb-4">__________________________</p>
+                                <p class="fw-bold">Customer Signature</p>
+                                <p class="small text-muted">Date: _______________</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Print Button -->
+                <div class="no-print mt-4 text-center">
+                    <button onclick="window.print()" class="btn btn-primary btn-lg">
+                        <i class="fas fa-print me-2"></i>Print Invoice
+                    </button>
+                    <a href="{% url 'store:booking_details' booking.id %}" class="btn btn-secondary btn-lg ms-2">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Booking
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-4 text-muted small no-print">
+            <p>Mustek East Africa - Your Trusted Partner for Quality Services</p>
+            <p>www.mustekea.co.ke | info@mustekea.co.ke | +254 700 000 000</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const price = parseFloat('{{ booking.service.base_price }}');
+            const vat = price * 0.16;
+            const total = price + vat;
+            
+            document.getElementById('vatDisplay').textContent = 'KES ' + vat.toFixed(2);
+            document.getElementById('totalDisplay').textContent = 'KES ' + total.toFixed(2);
+        });
+    </script>
+</body>
+</html>

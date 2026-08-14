@@ -1,0 +1,1039 @@
+{% extends 'base.html' %}
+
+{% block title %}Mustek East Africa{% endblock %}
+
+{% block content %}
+<!-- Floating Discount Badge -->
+<div class="position-fixed" style="top: 50%; right: 0; transform: translateY(-50%); z-index: 1000;">
+    <div class="text-white rounded-start p-2 shadow d-flex flex-column text-center" style="width: 80px; background-color: #dc3545;">
+        <span class="fw-bold">TODAY</span>
+        <span class="display-6 fw-bold">30%</span>
+        <span class="fw-bold">OFF</span>
+        <a href="{% url 'store:shop' %}" class="btn btn-sm btn-outline-light mt-2">SHOP</a>
+    </div>
+</div>
+
+<!-- Popup Modal -->
+<div class="modal fade" id="promotionModal" tabindex="-1" aria-labelledby="promotionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-body p-0">
+                <button type="button" class="btn-close position-absolute end-0 top-0 m-2" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="row g-0">
+                    <div class="col-md-5 bg-dark d-flex align-items-center justify-content-center p-4">
+                        <div class="text-center text-white">
+                            <h3 class="display-1 fw-bold">20%</h3>
+                            <h4 class="text-uppercase">OFF</h4>
+                            <p class="mb-0">YOUR FIRST ORDER</p>
+                        </div>
+                    </div>
+                    <div class="col-md-7 p-4" style="background-color: #f8f8f0;">
+                        <div class="text-center">
+                            <h4>JOIN OUR NEWSLETTER</h4>
+                            <p>Sign up and get 20% off your first order plus exclusive access to our new product launches!</p>
+                            <form>
+                                <div class="mb-3">
+                                    <input type="email" class="form-control" placeholder="Your email address" required>
+                                </div>
+                                <button type="submit" class="btn btn-dark w-100">GET MY DISCOUNT</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Countdown Timer Banner -->
+<div class="py-4 mb-5 bg-dark text-white">
+    <div class="container">
+        <div class="row align-items-center text-center">
+            <div class="col-md-4">
+                <h3 class="mb-md-0">OFFER ENDS IN:</h3>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex justify-content-center gap-3" id="countdown-timer">
+                    <div class="text-center">
+                        <div class="bg-secondary rounded p-2 mb-1">
+                            <span class="display-6 fw-bold" id="countdown-hours">24</span>
+                        </div>
+                        <small>HOURS</small>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-secondary rounded p-2 mb-1">
+                            <span class="display-6 fw-bold" id="countdown-minutes">00</span>
+                        </div>
+                        <small>MINUTES</small>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-secondary rounded p-2 mb-1">
+                            <span class="display-6 fw-bold" id="countdown-seconds">00</span>
+                        </div>
+                        <small>SECONDS</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mt-3 mt-md-0">
+                <a href="{% url 'store:shop' %}" class="btn btn-light text-dark">SHOP NOW</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hero Slider -->
+<style>
+/* Advanced Hero Image Styles with enhanced clarity */
+.hero-slide {
+    position: relative;
+    height: 75vh;
+    overflow: hidden;
+    transform: translate3d(0, 0, 0); /* Force GPU rendering */
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+.hero-slide img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    image-rendering: -webkit-optimize-contrast; /* Safari */
+    image-rendering: crisp-edges; /* Firefox */
+    -ms-interpolation-mode: nearest-neighbor; /* IE */
+    transform: translateZ(0) scale(1); /* Force GPU rendering */
+    backface-visibility: hidden;
+    filter: brightness(0.97) contrast(1.08) saturate(1.05); /* Enhance clarity */
+    will-change: transform;
+    transition: transform 0.6s ease-out;
+    z-index: 1;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-item.active .hero-slide img {
+    transform: translateZ(0) scale(1);
+}
+
+.hero-slide-content {
+    position: relative;
+    z-index: 2;
+    padding: 2rem;
+    max-width: 600px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 8px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.6s ease-out 0.2s;
+}
+
+.carousel-item.active .hero-slide-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .hero-slide {
+        height: 55vh;
+    }
+    .hero-slide-content {
+        max-width: 90%;
+        margin: 0 auto;
+    }
+}
+</style>
+
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="hero-slide">
+                <img src="/static/images/camping-gear.jpg" alt="Outdoor Camping Equipment" 
+                     loading="eager" 
+                     fetchpriority="high"
+                     decoding="async"
+                     sizes="100vw">
+                <div class="container d-flex align-items-center h-100">
+                    <div class="hero-slide-content ms-auto">
+                        <h2 class="fw-bold mb-3">Premium Outdoor Equipment</h2>
+                        <p class="mb-4">Discover Quality Camping Gear for Your Adventures</p>
+                        <a href="{% url 'store:shop' %}" class="btn btn-primary">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="hero-slide">
+                <img src="/static/images/bbq.jpg" alt="BBQ & Grilling Equipment" 
+                     loading="lazy" 
+                     decoding="async"
+                     sizes="100vw">
+                <div class="container d-flex align-items-center h-100">
+                    <div class="hero-slide-content">
+                        <h2 class="fw-bold mb-3">BBQ & Grilling Excellence</h2>
+                        <p class="mb-4">Premium Grills for Perfect Outdoor Cooking</p>
+                        <a href="{% url 'store:shop' %}" class="btn btn-primary">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="hero-slide">
+                <img src="/static/images/fridge.jpg" alt="Portable Fridges" 
+                     loading="lazy" 
+                     decoding="async"
+                     sizes="100vw">
+                <div class="container d-flex align-items-center h-100">
+                    <div class="hero-slide-content">
+                        <h2 class="fw-bold mb-3">Portable Cooling Solutions</h2>
+                        <p class="mb-4">Keep Your Food Fresh on Every Adventure</p>
+                        <a href="{% url 'store:shop' %}" class="btn btn-primary">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="hero-slide">
+                <img src="/static/images/camping-gear.jpg" alt="Camping Essentials" 
+                     loading="lazy" 
+                     decoding="async"
+                     sizes="100vw">
+                <div class="container d-flex align-items-center h-100">
+                    <div class="hero-slide-content">
+                        <h2 class="fw-bold mb-3">Complete Your Camping Setup</h2>
+                        <p class="mb-4">Everything You Need for the Perfect Outdoor Experience</p>
+                        <a href="{% url 'store:shop' %}" class="btn btn-primary">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="hero-slide">
+                <img src="/static/images/camping-hero-right-1.jpeg" alt="Camping Adventure" 
+                     loading="lazy" 
+                     decoding="async"
+                     sizes="100vw">
+                <div class="container d-flex align-items-center h-100">
+                    <div class="hero-slide-content ms-auto">
+                        <h2 class="fw-bold mb-3">Camping Adventures Await</h2>
+                        <p class="mb-4">Explore the Great Outdoors with Premium Gear</p>
+                        <a href="{% url 'store:shop' %}" class="btn btn-primary">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="hero-slide">
+                <img src="/static/images/camping-hero-right-2.jpeg" alt="Outdoor Experience" 
+                     loading="lazy" 
+                     decoding="async"
+                     sizes="100vw">
+                <div class="container d-flex align-items-center h-100">
+                    <div class="hero-slide-content ms-auto">
+                        <h2 class="fw-bold mb-3">Your Outdoor Journey Starts Here</h2>
+                        <p class="mb-4">Quality Equipment for Every Adventure</p>
+                        <a href="{% url 'store:shop' %}" class="btn btn-primary">Shop Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<!-- Shipping Info -->
+<div class="bg-light py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <span class="fw-medium">Orders ship next day | Logistics info updates within 1-2 working days</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Flash Sale Banner -->
+<div class="bg-dark text-white py-4 mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h3 class="mb-2">⚡ FLASH SALE! 24 HOURS ONLY! ⚡</h3>
+                <p class="mb-0">Up to 30% OFF on selected Portable Fridges! Don't miss this limited-time offer!</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{% url 'store:shop' %}" class="btn btn-outline-light">SHOP NOW</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bundle and Save Section -->
+<section class="py-5" style="background-color: #f8f8f0;">
+    <div class="container">
+        <h2 class="text-center h4 mb-2">Bundle & Save 5% Off on Kits</h2>
+        <p class="text-center mb-5">Get more value with our curated outdoor equipment sets</p>
+        
+        <div class="row g-4">
+            {% for product in bbq_products %}
+            <div class="col-md-4">
+                <div class="product-card">
+                    <div class="product-img-container">
+                        {% if product.images.first %}
+                            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="product-img">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                                <span class="text-muted">No Image</span>
+                            </div>
+                        {% endif %}
+                        {% if product.has_discount %}
+                        <div class="position-absolute top-0 start-0 bg-dark text-white p-2 m-2">
+                            <small>{{ product.get_discount_percentage }}% OFF</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h6 class="product-title">{{ product.name }}</h6>
+                        <div class="d-flex justify-content-center align-items-center">
+                            {% if product.has_discount %}
+                            <span class="product-original-price">KSh {{ product.price|floatformat:0 }}</span>
+                            <span class="product-price">KSh {{ product.get_discounted_price|floatformat:0 }}</span>
+                            {% else %}
+                            <span class="product-price">KSh {{ product.price|floatformat:0 }}</span>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'store:product_detail' product.slug %}" class="btn btn-sm btn-dark w-100">View Details</a>
+                        <form action="{% url 'store:add_to_cart' product.id %}" method="post" class="mt-2">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-dark w-100">Add to Cart</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'store:shop' %}" class="btn btn-outline-dark">View All Bundles</a>
+        </div>
+    </div>
+</section>
+
+<!-- New Arrivals Promotion -->
+<div class="bg-dark text-white py-4 my-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="ratio ratio-16x9">
+                    <video controls autoplay muted loop class="w-100 h-100 object-fit-cover">
+                        <source src="/static/images/outdoor.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <span class="display-5 fw-bold">NEW!</span>
+                <h3 class="mb-2">JUST ARRIVED: Portable Fridge Collection</h3>
+                <p class="mb-0">Keep your food fresh on every adventure with our latest portable cooling solutions!</p>
+                <a href="{% url 'store:shop' %}" class="btn btn-outline-light mt-3">DISCOVER NOW</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Brand Video Modal - Keeping this for compatibility but now using direct embed above -->
+<div class="modal fade" id="brandVideoModal" tabindex="-1" aria-labelledby="brandVideoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="brandVideoModalLabel">About Mustek East Africa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="ratio ratio-16x9">
+                    <video id="modalVideo" controls preload="metadata" class="home-video">
+                        <source src="/static/images/Neutriherbs  (2).mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Favorites -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center h4 mb-5">Customer Favorites</h2>
+        <div class="row g-4">
+            {% for product in customer_favorites %}
+            <div class="col-6 col-md-3">
+                <div class="product-card">
+                    <div class="product-img-container">
+                        {% if product.images.first %}
+                            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="product-img">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                                <span class="text-muted">No Image</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h6 class="product-title">{{ product.name }}</h6>
+                        <div class="d-flex justify-content-center align-items-center">
+                            {% if product.has_discount %}
+                            <span class="product-original-price">KSh {{ product.price|floatformat:0 }}</span>
+                            <span class="product-price">KSh {{ product.get_discounted_price|floatformat:0 }}</span>
+                            {% else %}
+                            <span class="product-price">KSh {{ product.price|floatformat:0 }}</span>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'store:product_detail' product.slug %}" class="btn btn-sm btn-dark w-100">View Details</a>
+                        <form action="{% url 'store:add_to_cart' product.id %}" method="post" class="mt-2">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-dark w-100">Add to Cart</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'store:shop' %}" class="btn btn-outline-primary">View All Products</a>
+        </div>
+    </div>
+</section>
+
+<!-- Free Shipping Banner -->
+<div class="bg-secondary text-white py-4 my-5">
+    <div class="container text-center">
+        <h4 class="mb-2">FREE SHIPPING ON ALL ORDERS OVER KSH 15,000</h4>
+        <p class="mb-0">Plus, get a FREE camping accessory with orders over KSh 25,000!</p>
+    </div>
+</div>
+
+<!-- Today's for You Section -->
+<section class="py-5" style="background-color: #f8f8f0;">
+    <div class="container">
+        <h2 class="text-center h4 mb-5">Today's for You</h2>
+        <div class="row">
+            <div class="col-12 text-center mb-4">
+                <h3 class="fw-bold mb-2">Equip Your Business with Our Technology Solutions</h3>
+                <p class="mb-4">Printers. POS Systems. Scanners. Projectors. Tablets.</p>
+                <div class="d-flex justify-content-center gap-3 mb-4">
+                    <a href="{% url 'store:shop' %}" class="btn btn-sm btn-outline-dark">View All Technology</a>
+                    <a href="{% url 'store:shop' %}" class="btn btn-sm btn-outline-dark">Office Equipment</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technology Products -->
+        <div class="row g-4">
+            {% for product in technology_products %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-container">
+                        {% if product.images.first %}
+                            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="product-img">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                                <span class="text-muted">No Image</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h6 class="product-title">{{ product.name }}</h6>
+                        <div class="d-flex justify-content-center align-items-center">
+                            {% if product.has_discount %}
+                            <span class="product-original-price">KSh {{ product.price|floatformat:0 }}</span>
+                            <span class="product-price">KSh {{ product.get_discounted_price|floatformat:0 }}</span>
+                            {% else %}
+                            <span class="product-price">KSh {{ product.price|floatformat:0 }}</span>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'store:product_detail' product.slug %}" class="btn btn-sm btn-dark w-100">View Details</a>
+                        <form action="{% url 'store:add_to_cart' product.id %}" method="post" class="mt-2">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-dark w-100">Add to Cart</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No technology products available at the moment.</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'store:shop' %}" class="btn btn-outline-primary">View All Technology Products</a>
+        </div>
+    </div>
+</section>
+
+<!-- Collection Categories -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center h4 mb-5">Mustek East Africa Collections - Warm Products</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <img src="/static/images/fire-pit-patio-heater.png" class="card-img-top" alt="Gas Fire Pit Patio Heater" style="height: 250px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">Gas Fire Pit Patio Heater</h5>
+                        <p class="card-text small text-muted">Short stand fire pit design for cozy outdoor warmth. Perfect for patios and outdoor gatherings.</p>
+                        <a href="{% url 'store:shop' %}" class="btn btn-sm btn-dark">View Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <img src="/static/images/designer-patio-heater.png" class="card-img-top" alt="Alva Designer Patio Heater" style="height: 250px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">Alva Designer Quartz-Glass Heater</h5>
+                        <p class="card-text small text-muted">Premium designer style with quartz glass elements. Elegant bronze cabinet finish for sophisticated outdoor heating.</p>
+                        <a href="{% url 'store:shop' %}" class="btn btn-sm btn-dark">View Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <img src="/static/images/mushroom-patio-heater.png" class="card-img-top" alt="Mushroom Patio Heater" style="height: 250px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">Mushroom Patio Heater</h5>
+                        <p class="card-text small text-muted">Premium stainless steel with 11-13.5 kW heat output. Total height 2285mm with aluminum reflector.</p>
+                        <a href="{% url 'store:shop' %}" class="btn btn-sm btn-dark">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Series -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h4 class="text-center mb-2">Power Backup Solutions</h4>
+        <h2 class="text-center mb-5">Reliable Power for Your Home & Business</h2>
+        
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="product-card">
+                    <div class="product-img-container">
+                        <img src="/static/images/mecer-650-ups.jpg" alt="Mecer 650 VA UPS" class="product-img">
+                    </div>
+                    <div class="product-info">
+                        <h6 class="product-title">Mecer 650 VA Line Interactive UPS</h6>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <span class="product-price">KSh 8,500</span>
+                        </div>
+                        <button class="add-to-cart-btn">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="product-card">
+                    <div class="product-img-container">
+                        <img src="/static/images/mecer-1000-ups.jpg" alt="Mecer 1000 VA UPS" class="product-img">
+                    </div>
+                    <div class="product-info">
+                        <h6 class="product-title">Mecer 1000 VA Line Interactive UPS</h6>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <span class="product-price">KSh 15,000</span>
+                        </div>
+                        <button class="add-to-cart-btn">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="product-card">
+                    <div class="product-img-container">
+                        <img src="/static/images/mecer-3000-inverter.jpg" alt="Mecer 3000VA Inverter" class="product-img">
+                    </div>
+                    <div class="product-info">
+                        <h6 class="product-title">Mecer 3000VA/3000W Inverter Charger</h6>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <span class="product-price">KSh 45,000</span>
+                        </div>
+                        <button class="add-to-cart-btn">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Camping Essentials -->
+<section class="py-5">
+    <div class="container">
+        <h4 class="text-center mb-2">Complete Your Setup</h4>
+        <h2 class="text-center mb-3">Everything You Need for the Perfect Outdoor Experience</h2>
+        <p class="text-center mb-5">Quality Gear for Every Adventure</p>
+        
+        <div class="row g-4">
+            {% for product in camping_essentials %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="product-card">
+                    <div class="product-img-container">
+                        {% if product.images.first %}
+                            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="product-img">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center h-100 bg-light">
+                                <span class="text-muted">No Image</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h6 class="product-title">{{ product.name }}</h6>
+                        <div class="d-flex justify-content-center align-items-center">
+                            {% if product.has_discount %}
+                            <span class="product-original-price">KSh {{ product.price|floatformat:0 }}</span>
+                            <span class="product-price">KSh {{ product.get_discounted_price|floatformat:0 }}</span>
+                            {% else %}
+                            <span class="product-price">KSh {{ product.price|floatformat:0 }}</span>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'store:product_detail' product.slug %}" class="btn btn-sm btn-dark w-100">View Details</a>
+                        <form action="{% url 'store:add_to_cart' product.id %}" method="post" class="mt-2">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-dark w-100">Add to Cart</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'store:shop' %}" class="btn btn-outline-primary">View All Camping Gear</a>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Posts -->
+<section class="py-5" style="background-color: #f8f8f0;">
+    <div class="container">
+        <h2 class="text-center h4 mb-5">From Mustek East Africa Blog</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="/static/images/camping-tips.jpg" class="card-img-top" alt="Camping Tips" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <span class="badge bg-dark mb-2">Camping Tips</span>
+                        <h5 class="card-title">Essential Camping Gear: The Complete Guide</h5>
+                        <p class="card-text text-muted">Everything you need to know about choosing the right camping equipment for your outdoor adventures...</p>
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <a href="#" class="btn btn-sm btn-outline-dark">Read More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="/static/images/bbq-tips.jpg" class="card-img-top" alt="BBQ Tips" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <span class="badge bg-dark mb-2">BBQ Tips</span>
+                        <h5 class="card-title">Master the Art of Outdoor Cooking</h5>
+                        <p class="card-text text-muted">Complete guide to perfect BBQ techniques, from preparation to serving the perfect meal...</p>
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <a href="#" class="btn btn-sm btn-outline-dark">Read More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <img src="/static/images/outdoor-safety.jpg" class="card-img-top" alt="Outdoor Safety" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <span class="badge bg-dark mb-2">Outdoor Safety</span>
+                        <h5 class="card-title">Stay Safe on Your Outdoor Adventures</h5>
+                        <p class="card-text text-muted">Essential safety tips and guidelines for camping, hiking, and outdoor activities to ensure a safe and enjoyable experience...</p>
+                    </div>
+                    <div class="card-footer bg-white border-0">
+                        <a href="#" class="btn btn-sm btn-outline-dark">Read More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Brands Section -->
+<section class="py-5 overflow-hidden">
+    <div class="container">
+        <h2 class="text-center h4 mb-5">Our Brands</h2>
+    </div>
+    <div class="brands-carousel-wrapper">
+        <div class="brands-carousel d-flex" id="brandsCarousel">
+            {% for brand in brands %}
+            <div class="brand-slide flex-shrink-0">
+                <div class="card border-0 shadow-sm h-100 brand-card mx-2" style="width: 200px;">
+                    {% if brand.logo %}
+                    <div class="card-body d-flex align-items-center justify-content-center p-3">
+                        <img src="{{ brand.logo.url }}" alt="{{ brand.alt_text|default:brand.name }}" class="img-fluid" style="max-height: 80px; object-fit: contain;">
+                    </div>
+                    {% else %}
+                    <div class="card-body d-flex align-items-center justify-content-center p-3 bg-light" style="height: 100px;">
+                        <span class="text-muted text-center">{{ brand.name }}</span>
+                    </div>
+                    {% endif %}
+                    {% if brand.link_url %}
+                    <div class="card-footer bg-white border-0 text-center p-2">
+                        <a href="{{ brand.link_url }}" class="btn btn-sm btn-outline-dark w-100">View Brand</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center w-100">
+                <p class="text-muted">No brands available at the moment.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+.brand-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.brand-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.brands-carousel-wrapper {
+    overflow: hidden;
+    position: relative;
+}
+
+.brands-carousel {
+    display: flex;
+    animation: scroll-left 20s linear infinite;
+}
+
+.brands-carousel:hover {
+    animation-play-state: paused;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.brand-slide {
+    flex-shrink: 0;
+}
+</style>
+
+<!-- Newsletter -->
+<section class="py-5 bg-dark text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <div class="position-relative">
+                    <img src="/static/images/camping-gear.jpg" alt="Outdoor Equipment" class="img-fluid rounded-3 shadow" style="height: 350px; object-fit: cover; width: 100%;">
+                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-25 rounded-3"></div>
+                    <div class="position-absolute top-50 start-50 translate-middle text-center text-white">
+                        <span class="badge bg-primary mb-2">EXCLUSIVE UPDATES</span>
+                        <h3 class="fw-bold">Stay Equipped</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="bg-white text-dark p-4 rounded-3 shadow">
+                    <h3 class="fw-bold mb-3 text-center">JOIN OUR NEWSLETTER</h3>
+                    <p class="mb-4 text-center">Be the first to know about new products, exclusive offers, and outdoor tips tailored for you.</p>
+                    <form class="newsletter-form">
+                        <div class="mb-3">
+                            <input type="text" class="form-control form-control-lg border-0 bg-light mb-2" placeholder="Your Name" required>
+                            <input type="email" class="form-control form-control-lg border-0 bg-light" placeholder="Your Email Address" required>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="newsletter-consent" checked>
+                            <label class="form-check-label small" for="newsletter-consent">
+                                I agree to receive promotional emails and understand I can unsubscribe anytime.
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-dark btn-lg w-100 rounded-pill">
+                            <i class="fas fa-envelope me-2"></i>SUBSCRIBE
+                        </button>
+                        <p class="text-center small mt-3 text-muted">
+                            <i class="fas fa-lock me-1"></i>Your information is secure and will never be shared
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Exclusive Deal Banner -->
+<div class="py-4 my-5" style="background-color: #f8f8f0;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <h3 class="mb-2 text-dark">🔒 EXCLUSIVE ONLINE DEAL</h3>
+                <p class="mb-0 text-dark">Buy any 2 camping items and get 15% OFF automatically at checkout!</p>
+            </div>
+            <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                <a href="{% url 'store:shop' %}" class="btn btn-dark">SHOP CAMPING GEAR</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="alerts-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050;"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Duplicate brand items for infinite scroll
+    const brandsCarousel = document.getElementById('brandsCarousel');
+    if (brandsCarousel) {
+        const brandSlides = brandsCarousel.querySelectorAll('.brand-slide');
+        if (brandSlides.length > 0) {
+            // Clone all brand slides and append them
+            brandSlides.forEach(slide => {
+                const clone = slide.cloneNode(true);
+                brandsCarousel.appendChild(clone);
+            });
+        }
+    }
+    
+    // Show promotion popup after 5 seconds
+    setTimeout(function() {
+        let promotionModal = new bootstrap.Modal(document.getElementById('promotionModal'));
+        promotionModal.show();
+    }, 5000);
+    
+    // Countdown timer
+    function updateCountdown() {
+        // Set a specific end date for the offer (e.g., end of the current month)
+        const now = new Date();
+        
+        // Option 1: Set to end of current month
+        const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        endDate.setHours(0, 0, 0, 0);
+        
+        // Store end date in localStorage so it persists between page refreshes
+        if (!localStorage.getItem('offerEndDate')) {
+            // If no end date is stored, set one and store it
+            // For testing purposes, set to 24 hours from first visit
+            const testEndDate = new Date(now);
+            testEndDate.setDate(testEndDate.getDate() + 1);
+            localStorage.setItem('offerEndDate', testEndDate.getTime());
+        }
+        
+        // Get the stored end date
+        const storedEndTime = parseInt(localStorage.getItem('offerEndDate'));
+        const targetDate = new Date(storedEndTime);
+        
+        const timeLeft = targetDate - now;
+        
+        // If countdown is finished
+        if (timeLeft <= 0) {
+            document.getElementById('countdown-hours').textContent = '00';
+            document.getElementById('countdown-minutes').textContent = '00';
+            document.getElementById('countdown-seconds').textContent = '00';
+            
+            // Optional: hide the countdown or show "Offer Expired"
+            // document.getElementById('countdown-timer').innerHTML = '<div class="alert alert-warning">Offer Expired!</div>';
+            return;
+        }
+        
+        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+        
+        document.getElementById('countdown-hours').textContent = hours.toString().padStart(2, '0');
+        document.getElementById('countdown-minutes').textContent = minutes.toString().padStart(2, '0');
+        document.getElementById('countdown-seconds').textContent = seconds.toString().padStart(2, '0');
+    }
+    
+    // Update the countdown every second
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+    
+    // Video handling
+    const mainVideo = document.getElementById('mainVideo');
+    const modalVideo = document.getElementById('modalVideo');
+    const brandVideoModal = document.getElementById('brandVideoModal');
+    
+    // Pause main video when it scrolls out of view to save resources
+    if (mainVideo) {
+        // Create an Intersection Observer to detect when video is visible
+        const videoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                // If video is not visible, pause it
+                if (!entry.isIntersecting && !mainVideo.paused) {
+                    mainVideo.pause();
+                }
+            });
+        }, { threshold: 0.2 }); // 20% visibility threshold
+        
+        // Start observing the main video
+        videoObserver.observe(mainVideo);
+    }
+    
+    // Handle modal video
+    if (brandVideoModal && modalVideo) {
+        // Play video when modal opens
+        brandVideoModal.addEventListener('shown.bs.modal', function () {
+            modalVideo.play();
+        });
+        
+        // Pause video when modal closes
+        brandVideoModal.addEventListener('hide.bs.modal', function () {
+            modalVideo.pause();
+        });
+        
+        // Reset video when modal is fully hidden
+        brandVideoModal.addEventListener('hidden.bs.modal', function () {
+            modalVideo.currentTime = 0;
+        });
+    }
+});
+</script>
+{% endblock %}
+
+<!-- Add this style block to improve product images -->
+<style>
+.product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.3s ease;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+.product-img-container {
+    position: relative;
+    overflow: hidden;
+    height: 200px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-card:hover .product-img {
+    transform: scale(1.05);
+}
+
+/* Video styles */
+.home-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background-color: #000;
+}
+
+/* Improve video modal */
+#brandVideoModal .modal-content {
+    background-color: #000;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#brandVideoModal .modal-header {
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+    border-bottom: none;
+}
+
+#brandVideoModal .btn-close {
+    filter: invert(1);
+}
+
+/* Force video aspect ratio to prevent layout shift */
+.ratio-16x9::before {
+    padding-top: 56.25%;
+    content: "";
+    display: block;
+}
+
+/* Improve hero slider responsive handling */
+@media (max-width: 768px) {
+    .hero-slide {
+        height: 50vh !important;
+    }
+    
+    .hero-slide-content {
+        background-color: rgba(255,255,255,0.7);
+        padding: 1.5rem;
+        border-radius: 8px;
+        backdrop-filter: blur(5px);
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Preload hero images at highest quality
+    const heroImages = [
+        '/static/images/Wholesale Natural Body Care-2.jpg',
+        '/static/images/A.png',
+        '/static/images/Reliable Skincare Vendor for Retailers-3.jpg',
+        '/static/images/1 (1) (1).png'
+    ];
+    
+    // Create preload links
+    heroImages.forEach(imageSrc => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.href = imageSrc;
+        link.as = 'image';
+        link.importance = 'high';
+        document.head.appendChild(link);
+        
+        // Also preload into browser cache at full resolution
+        const img = new Image();
+        img.src = imageSrc;
+    });
+    
+    // Force full resolution rendering of images
+    const carouselImages = document.querySelectorAll('#heroCarousel img');
+    carouselImages.forEach(img => {
+        // Apply maximum quality rendering
+        img.style.imageRendering = '-webkit-optimize-contrast';
+        
+        // Ensure image is fully loaded at highest quality
+        img.onload = function() {
+            // Small trick to force browser to render at highest quality
+            img.style.opacity = '0.99';
+            setTimeout(() => {
+                img.style.opacity = '1';
+            }, 100);
+        };
+    });
+    
+    // Enhance image display on slide change
+    const carousel = document.getElementById('heroCarousel');
+    carousel.addEventListener('slide.bs.carousel', event => {
+        const nextSlide = event.relatedTarget;
+        const img = nextSlide.querySelector('img');
+        
+        // Force high-quality rendering on each slide change
+        img.style.transform = 'translateZ(0) scale(1.02)';
+        setTimeout(() => {
+            img.style.transform = 'translateZ(0) scale(1)';
+        }, 50);
+    });
+});
+</script> 

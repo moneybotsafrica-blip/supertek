@@ -1,0 +1,73 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Mustek East Africa Admin Branding */
+    #header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+        border-bottom: 3px solid #e74c3c !important;
+    }
+    
+    #branding h1 {
+        color: #ecf0f1 !important;
+        font-size: 24px !important;
+        font-weight: bold !important;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
+    }
+    
+    #branding a {
+        color: #ecf0f1 !important;
+        text-decoration: none !important;
+    }
+    
+    #branding a:hover {
+        color: #e74c3c !important;
+    }
+    
+    .module h2, .module caption, .inline-group h2 {
+        background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important;
+        color: #ecf0f1 !important;
+    }
+    
+    .module h2, .module caption {
+        border-bottom: 2px solid #e74c3c !important;
+    }
+    
+    #site-name a {
+        color: #ecf0f1 !important;
+        font-weight: bold !important;
+    }
+    
+    .button, input[type=submit], input[type=button], .submit-row input {
+        background: #e74c3c !important;
+        border-color: #c0392b !important;
+    }
+    
+    .button:active, input[type=submit]:active, input[type=button]:active, .submit-row input:active {
+        background: #c0392b !important;
+    }
+    
+    .button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover {
+        background: #c0392b !important;
+    }
+    
+    .object-tools a {
+        background: #e74c3c !important;
+        border-color: #c0392b !important;
+    }
+    
+    .object-tools a:hover {
+        background: #c0392b !important;
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<div id="branding" style="padding: 15px 0;">
+    <h1 style="margin: 0; font-size: 28px; color: #ecf0f1;">
+        <span style="color: #e74c3c;">Mustek</span> East Africa
+    </h1>
+    <p style="margin: 5px 0 0 0; color: #bdc3c7; font-size: 14px;">Outdoor & Camping Equipment Administration</p>
+</div>
+{% endblock %}

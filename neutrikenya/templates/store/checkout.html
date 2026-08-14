@@ -1,0 +1,806 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - Mustek East Africa{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Custom Checkout Styles */
+    .checkout-progress {
+        margin-bottom: 2rem;
+    }
+    
+    .checkout-step {
+        position: relative;
+        padding-bottom: 1.5rem;
+        text-align: center;
+    }
+    
+    .checkout-step::before {
+        content: "";
+        position: absolute;
+        top: 35px;
+        left: 50%;
+        right: 50%;
+        height: 2px;
+        background-color: #e9ecef;
+        z-index: 1;
+    }
+    
+    .checkout-step:last-child::before {
+        display: none;
+    }
+    
+    .step-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 15px;
+        background-color: #fff;
+        border: 2px solid var(--primary-color);
+        border-radius: 50%;
+        color: var(--primary-color);
+        font-size: 32px;
+        position: relative;
+        z-index: 5;
+    }
+    
+    .step-active .step-icon {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .step-completed .step-icon {
+        background-color: var(--success-color);
+        border-color: var(--success-color);
+        color: white;
+    }
+    
+    .step-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    
+    .step-subtitle {
+        font-size: 14px;
+        color: #6c757d;
+    }
+    
+    /* Payment Method Styles */
+    .payment-method-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        margin-bottom: 1rem;
+    }
+    
+    .payment-method-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+    }
+    
+    .payment-method-card.selected {
+        border-color: var(--primary-color);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+    
+    .payment-method-card[data-method="mpesa"] {
+        border-left: 3px solid #4cd964;
+    }
+    
+    .payment-method-card.selected[data-method="mpesa"] {
+        background-color: #f2fef5;
+        border-color: #4cd964;
+    }
+    
+    .payment-details {
+        display: none;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-top: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    /* Order summary card */
+    .order-summary-card {
+        position: sticky;
+        top: 2rem;
+    }
+    
+    .product-item {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .product-item:last-child {
+        border-bottom: none;
+    }
+    
+    .product-img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+    
+    .product-name {
+        font-weight: 500;
+        font-size: 14px;
+        margin-bottom: 0.25rem;
+    }
+    
+    .product-variant {
+        font-size: 12px;
+        color: #6c757d;
+    }
+    
+    /* Form styling */
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(var(--primary-color-rgb), 0.25);
+    }
+    
+    .btn-checkout {
+        padding: 12px 24px;
+        font-weight: 600;
+    }
+    
+    .section-heading {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+    
+    .section-heading::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background-color: var(--primary-color);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="h3 mb-4 text-center">Checkout</h1>
+    
+    {% if cart.items.all %}
+        <!-- Checkout Progress -->
+        <div class="checkout-progress mb-5">
+            <div class="row">
+                <div class="col-4 checkout-step step-completed">
+                    <div class="step-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h5 class="step-title">Cart</h5>
+                    <p class="step-subtitle">Completed</p>
+                </div>
+                <div class="col-4 checkout-step step-active">
+                    <div class="step-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h5 class="step-title">Checkout</h5>
+                    <p class="step-subtitle">Current Step</p>
+                </div>
+                <div class="col-4 checkout-step">
+                    <div class="step-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h5 class="step-title">Confirmation</h5>
+                    <p class="step-subtitle">Next Step</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Checkout Form -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body p-4">
+                        <form action="{% url 'store:place_order' %}" method="post" id="checkout-form">
+                            {% csrf_token %}
+                            <h4 class="section-heading">Contact Information</h4>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="first_name" class="form-label">First Name *</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="last_name" class="form-label">Last Name *</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">Phone *</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="+254" required>
+                                </div>
+                            </div>
+                            
+                            <h4 class="section-heading">Shipping Address</h4>
+                            <div class="row g-3 mb-4">
+                                <div class="col-12">
+                                    <label for="address" class="form-label">Address *</label>
+                                    <input type="text" class="form-control" id="address" name="address" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="city" class="form-label">City/Town *</label>
+                                    <input type="text" class="form-control" id="city" name="city" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="county" class="form-label">County</label>
+                                    <select class="form-select" id="county" name="county">
+                                        <option value="">Select County</option>
+                                        <option value="Nairobi">Nairobi</option>
+                                        <option value="Mombasa">Mombasa</option>
+                                        <option value="Kisumu">Kisumu</option>
+                                        <option value="Nakuru">Nakuru</option>
+                                        <option value="Eldoret">Eldoret</option>
+                                        <!-- Add more counties as needed -->
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="delivery_instructions" class="form-label">Delivery Instructions (optional)</label>
+                                    <textarea class="form-control" id="delivery_instructions" name="delivery_instructions" rows="2" placeholder="Apartment number, gate code, or special instructions"></textarea>
+                                </div>
+                            </div>
+                            
+                            <h4 class="section-heading">Payment Method</h4>
+                            <div class="mb-4">
+                                <div class="payment-method-card selected" data-method="mpesa">
+                                    <div class="p-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="payment_method" id="mpesa" value="mpesa" checked>
+                                            <label class="form-check-label w-100" for="mpesa">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fw-medium">M-Pesa</span>
+                                                    <img src="/static/images/mpesa-logo.png" alt="M-Pesa" style="height: 40px;">
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="payment-details" id="mpesa-details" style="display: block;">
+                                        <div class="alert alert-info mb-3">
+                                            <small><i class="fas fa-info-circle me-2"></i> You will receive an M-Pesa push notification to complete payment after your order is placed.</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="mpesa_phone" class="form-label">M-Pesa Phone Number</label>
+                                            <input type="tel" class="form-control" id="mpesa_phone" name="mpesa_phone" placeholder="+254">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    I agree to the <a href="#" class="text-decoration-underline" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>
+                                </label>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg btn-checkout" id="checkout-submit-btn">Complete Order</button>
+                            </div>
+                            
+                            <!-- Payment Processing Status -->
+                            <div id="payment-status" class="mt-3" style="display: none;">
+                                <div class="alert alert-info d-flex align-items-center">
+                                    <div class="spinner-border spinner-border-sm me-3" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <div>
+                                        <strong>Processing Payment...</strong>
+                                        <p class="mb-0 small">Please wait while we initiate your M-Pesa payment. Do not close this window.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Payment Error Status -->
+                            <div id="payment-error" class="mt-3" style="display: none;">
+                                <div class="alert alert-danger">
+                                    <strong>Payment Failed</strong>
+                                    <p class="mb-2" id="payment-error-message">There was an error processing your payment. Please try again.</p>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#errorModal">Pay via the Buy Goods Number</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-0 order-summary-card">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="mb-0 fw-bold">Order Summary</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-4">
+                            {% for item in cart.items.all %}
+                                <div class="product-item d-flex">
+                                    <div class="me-3">
+                                        {% for image in item.product.images.all %}
+                                            {% if image.is_main %}
+                                                <img src="{{ image.image.url }}" alt="{{ item.product.name }}" class="product-img">
+                                            {% endif %}
+                                        {% empty %}
+                                            <div class="product-img bg-light d-flex align-items-center justify-content-center">
+                                                <i class="fas fa-image text-muted"></i>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="product-name">{{ item.product.name }}</h6>
+                                        <p class="product-variant">{{ item.product.category.name }}</p>
+                                        <div class="d-flex justify-content-between">
+                                            <small>Qty: {{ item.quantity }}</small>
+                                            <span class="fw-medium">KSh {{ item.total_price }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <span>KSh {{ cart.total_price }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping:</span>
+                            <span>Free</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="fw-bold">Total:</span>
+                            <span class="fw-bold fs-5">KSh {{ cart.total_price }}</span>
+                        </div>
+                        
+                        <div class="border p-3 rounded bg-light mb-3">
+                            <h6 class="mb-2 fw-bold">Have a coupon?</h6>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Coupon code">
+                                <button class="btn btn-outline-primary" type="button">Apply</button>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center justify-content-center mt-4">
+                            <i class="fas fa-lock text-success me-2"></i>
+                            <small class="text-muted">Secure Checkout | Your data is protected</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-shopping-cart fa-5x text-muted"></i>
+            </div>
+            <h3 class="mb-3">Your cart is empty</h3>
+            <p class="mb-4">You need to add items to your cart before checkout.</p>
+            <a href="{% url 'store:home' %}" class="btn btn-primary">
+                Continue Shopping
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. General Terms</h6>
+                <p>By placing an order through our website, you agree to these terms and conditions. Please read them carefully before completing your purchase.</p>
+                
+                <h6>2. Delivery</h6>
+                <p>We aim to deliver products within 1-5 business days within Nairobi and 3-7 business days for other locations in Kenya. Delivery times may vary depending on your location and availability of products.</p>
+                
+                <h6>3. Payment</h6>
+                <p>We accept M-Pesa as our primary payment method. Payment information is encrypted and secure.</p>
+                
+                <h6>4. Returns Policy</h6>
+                <p>If you are not satisfied with your purchase, you may return it within 7 days of receipt. Products must be unused, in their original packaging, and in the same condition you received them.</p>
+                
+                <h6>5. Privacy Policy</h6>
+                <p>We respect your privacy and protect your personal information. We will only use your details to process your order and provide customer service.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Payment Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="errorModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Payment Error
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <i class="fas fa-times-circle fa-4x text-danger mb-3"></i>
+                    <h5>Payment Processing Failed</h5>
+                    <p class="text-muted">We encountered an error while processing your M-Pesa payment.</p>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <strong>Error Details:</strong>
+                    <p class="mb-0" id="modal-error-message">There was an error processing your payment. Please try again.</p>
+                </div>
+                
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="border rounded p-3">
+                            <i class="fas fa-mobile-alt fa-2x text-primary mb-2"></i>
+                            <p class="small mb-0">Check your M-Pesa phone number</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="border rounded p-3">
+                            <i class="fas fa-wifi fa-2x text-primary mb-2"></i>
+                            <p class="small mb-0">Check your internet connection</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <p class="small text-muted mb-2">Alternative Payment Method:</p>
+                    <div class="alert alert-info">
+                        <p class="small mb-0"><strong>Pay via Buy Goods Number:</strong> Use M-Pesa Buy Goods option instead of Pay Bill for this transaction.</p>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <p class="small text-muted mb-2">Other solutions:</p>
+                    <ul class="small text-muted">
+                        <li>Ensure you have sufficient M-Pesa balance</li>
+                        <li>Try using a different phone number</li>
+                        <li>Contact Safaricom if the issue persists</li>
+                        <li>Reach out to our support team for assistance</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="modal-retry-payment">
+                    <i class="fas fa-redo me-2"></i>Try Again
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Payment method selection
+    const paymentMethods = document.querySelectorAll('.payment-method-card');
+    const radioInputs = document.querySelectorAll('input[name="payment_method"]');
+    
+    // Show the selected payment method details initially
+    showSelectedPaymentDetails();
+    
+    // Add click event to payment method cards
+    paymentMethods.forEach(card => {
+        card.addEventListener('click', function() {
+            const method = this.dataset.method;
+            const radio = document.getElementById(method);
+            
+            // Check the corresponding radio button
+            if (radio) {
+                radio.checked = true;
+            }
+            
+            // Add animation
+            this.classList.add('animate__animated', 'animate__pulse');
+            setTimeout(() => {
+                this.classList.remove('animate__animated', 'animate__pulse');
+            }, 800);
+            
+            // Update UI
+            updatePaymentMethodUI();
+            showSelectedPaymentDetails();
+        });
+    });
+    
+    // Add change event to radio buttons
+    radioInputs.forEach(radio => {
+        radio.addEventListener('change', function() {
+            updatePaymentMethodUI();
+            showSelectedPaymentDetails();
+        });
+    });
+    
+    function updatePaymentMethodUI() {
+        // Remove selected class from all cards
+        paymentMethods.forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        // Add selected class to the selected card
+        const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
+        if (selectedMethod) {
+            const card = document.querySelector(`.payment-method-card[data-method="${selectedMethod.value}"]`);
+            if (card) {
+                card.classList.add('selected');
+            }
+        }
+    }
+    
+    function showSelectedPaymentDetails() {
+        // Hide all payment details
+        const allDetails = document.querySelectorAll('.payment-details');
+        allDetails.forEach(detail => {
+            detail.style.display = 'none';
+        });
+        
+        // Show selected payment details
+        const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
+        if (selectedMethod) {
+            const details = document.getElementById(`${selectedMethod.value}-details`);
+            if (details) {
+                details.style.display = 'block';
+                
+                // Animate details
+                details.classList.add('animate__animated', 'animate__fadeIn');
+                setTimeout(() => {
+                    details.classList.remove('animate__animated', 'animate__fadeIn');
+                }, 800);
+            }
+        }
+    }
+    
+    // Form validation
+    const checkoutForm = document.getElementById('checkout-form');
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Basic form validation
+            const requiredFields = checkoutForm.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                    
+                    // Add error message if it doesn't exist
+                    if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('invalid-feedback')) {
+                        const errorMsg = document.createElement('div');
+                        errorMsg.className = 'invalid-feedback';
+                        errorMsg.textContent = 'This field is required';
+                        field.parentNode.insertBefore(errorMsg, field.nextElementSibling);
+                    }
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
+            
+            // Validate M-Pesa phone if M-Pesa is selected
+            if (selectedMethod && selectedMethod.value === 'mpesa') {
+                const mpesaPhone = document.getElementById('mpesa_phone');
+                if (!mpesaPhone.value) {
+                    isValid = false;
+                    mpesaPhone.classList.add('is-invalid');
+                    
+                    // Add error message if it doesn't exist
+                    if (!mpesaPhone.nextElementSibling || !mpesaPhone.nextElementSibling.classList.contains('invalid-feedback')) {
+                        const errorMsg = document.createElement('div');
+                        errorMsg.className = 'invalid-feedback';
+                        errorMsg.textContent = 'Please enter your M-Pesa phone number';
+                        mpesaPhone.parentNode.insertBefore(errorMsg, mpesaPhone.nextElementSibling);
+                    }
+                } else {
+                    mpesaPhone.classList.remove('is-invalid');
+                }
+            }
+            
+            // Validate terms checkbox
+            const termsCheckbox = document.getElementById('terms');
+            if (!termsCheckbox.checked) {
+                isValid = false;
+                termsCheckbox.classList.add('is-invalid');
+                
+                // Add error message if it doesn't exist
+                const termsLabel = termsCheckbox.closest('label');
+                if (!termsLabel.nextElementSibling || !termsLabel.nextElementSibling.classList.contains('invalid-feedback')) {
+                    const errorMsg = document.createElement('div');
+                    errorMsg.className = 'invalid-feedback d-block';
+                    errorMsg.textContent = 'You must agree to the terms and conditions';
+                    termsLabel.parentNode.insertBefore(errorMsg, termsLabel.nextElementSibling);
+                }
+            } else {
+                termsCheckbox.classList.remove('is-invalid');
+            }
+            
+            if (isValid) {
+                // Show loading state
+                const submitBtn = document.getElementById('checkout-submit-btn');
+                const originalText = submitBtn.innerHTML;
+                const paymentStatus = document.getElementById('payment-status');
+                const paymentError = document.getElementById('payment-error');
+                
+                // Hide error if visible
+                paymentError.style.display = 'none';
+                
+                // Disable submit button and show processing status
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+                paymentStatus.style.display = 'block';
+                
+                // Submit the form via AJAX for better error handling
+                const formData = new FormData(checkoutForm);
+                
+                fetch('/place-order/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        // Payment was successful, redirect to confirmation
+                        window.location.href = response.url;
+                        return;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.success) {
+                        // Redirect to order confirmation
+                        window.location.href = data.redirect_url;
+                    } else if (data && data.error) {
+                        // Show error message
+                        paymentStatus.style.display = 'none';
+                        paymentError.style.display = 'block';
+                        const errorMessage = data.error;
+                        document.getElementById('payment-error-message').textContent = errorMessage;
+                        document.getElementById('modal-error-message').textContent = errorMessage;
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    } else {
+                        // If no JSON response, it might be a regular redirect
+                        checkoutForm.submit();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error processing order:', error);
+                    paymentStatus.style.display = 'none';
+                    paymentError.style.display = 'block';
+                    const errorMessage = 'Unable to proceed with payment. Please try again.';
+                    document.getElementById('payment-error-message').textContent = errorMessage;
+                    document.getElementById('modal-error-message').textContent = errorMessage;
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                });
+            } else {
+                // Scroll to the first invalid element
+                const firstInvalid = checkoutForm.querySelector('.is-invalid');
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    firstInvalid.focus();
+                }
+            }
+        });
+        
+        // Modal retry payment button
+        const modalRetryBtn = document.getElementById('modal-retry-payment');
+        if (modalRetryBtn) {
+            modalRetryBtn.addEventListener('click', function() {
+                // Close the modal
+                const errorModal = bootstrap.Modal.getInstance(document.getElementById('errorModal'));
+                if (errorModal) {
+                    errorModal.hide();
+                }
+                
+                // Hide error alert
+                document.getElementById('payment-error').style.display = 'none';
+                
+                // Resubmit the form
+                checkoutForm.dispatchEvent(new Event('submit'));
+            });
+        }
+        
+        // Update modal error message when modal is shown
+        const errorModal = document.getElementById('errorModal');
+        if (errorModal) {
+            errorModal.addEventListener('show.bs.modal', function() {
+                const errorMessage = document.getElementById('payment-error-message').textContent;
+                document.getElementById('modal-error-message').textContent = errorMessage;
+            });
+        }
+        
+        // Clear validation errors when user starts typing
+        checkoutForm.querySelectorAll('input, select, textarea').forEach(field => {
+            field.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+                const feedback = this.nextElementSibling;
+                if (feedback && feedback.classList.contains('invalid-feedback')) {
+                    feedback.style.display = 'none';
+                }
+            });
+        });
+    }
+    
+    // Format card number with spaces
+    const cardNumberInput = document.getElementById('card_number');
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function(e) {
+            let value = this.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            let formattedValue = '';
+            
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formattedValue += ' ';
+                }
+                formattedValue += value[i];
+            }
+            
+            this.value = formattedValue;
+        });
+    }
+    
+    // Format card expiry with slash
+    const cardExpiryInput = document.getElementById('card_expiry');
+    if (cardExpiryInput) {
+        cardExpiryInput.addEventListener('input', function(e) {
+            let value = this.value.replace(/\D/g, '');
+            
+            if (value.length > 2) {
+                this.value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            } else {
+                this.value = value;
+            }
+        });
+    }
+    
+    // Format CVV to only allow 3-4 digits
+    const cardCvvInput = document.getElementById('card_cvv');
+    if (cardCvvInput) {
+        cardCvvInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '').substring(0, 4);
+        });
+    }
+    
+    // Auto-update M-Pesa phone from the contact phone
+    const contactPhone = document.getElementById('phone');
+    const mpesaPhone = document.getElementById('mpesa_phone');
+    if (contactPhone && mpesaPhone) {
+        contactPhone.addEventListener('change', function() {
+            if (!mpesaPhone.value) {
+                mpesaPhone.value = this.value;
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 

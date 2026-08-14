@@ -1,0 +1,718 @@
+{% extends 'base.html' %}
+
+{% block title %}Shop All Products - Mustek East Africa{% endblock %}
+
+{% block footer_background %}
+{% if current_category and current_category.slug in "portable-fridges-freezers bbq-grilling camping-equipment ice-makers heaters power-accessories" %}linear-gradient(135deg, #2d5a27 0%, #1e3d1a 100%){% elif current_category and current_category.slug == "accessories-spare-parts" %}linear-gradient(135deg, #1e4d7c 0%, #153a5f 100%){% else %}#000000{% endif %}
+{% endblock %}
+
+{% block footer_heading_color %}
+{% if current_category and current_category.slug in "portable-fridges-freezers bbq-grilling camping-equipment ice-makers heaters power-accessories" %}#d4af37{% elif current_category and current_category.slug == "accessories-spare-parts" %}#3a7ca5{% else %}#ffffff{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .advertisement-panel {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .advertisement-panel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15) !important;
+    }
+    
+    .advertisement-link:hover .card-title {
+        text-decoration: underline;
+    }
+    
+    .flex-basis-0 {
+        flex-basis: 0;
+    }
+</style>
+{% if current_category and current_category.slug in "portable-fridges-freezers bbq-grilling camping-equipment ice-makers heaters power-accessories" %}
+<style>
+    /* Vintage Golden Green Outdoor Theme */
+    .vintage-outdoor {
+        background-color: #f5f0e1;
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9b896' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    .vintage-outdoor h1, .vintage-outdoor h2, .vintage-outdoor h3, .vintage-outdoor h4, .vintage-outdoor h5 {
+        font-family: 'Georgia', 'Times New Roman', serif;
+        color: #2d5a27;
+    }
+    
+    .vintage-outdoor .breadcrumb-item a {
+        color: #8b7355;
+    }
+    
+    .vintage-outdoor .breadcrumb-item.active {
+        color: #2d5a27;
+    }
+    
+    .vintage-outdoor .product-card {
+        border: 2px solid #c9b896;
+        border-radius: 8px;
+        background-color: #fffef5;
+    }
+    
+    .vintage-outdoor .product-card:hover {
+        border-color: #d4af37;
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+    }
+    
+    .vintage-outdoor .add-to-cart-btn {
+        background-color: #2d5a27;
+        border-color: #2d5a27;
+    }
+    
+    .vintage-outdoor .add-to-cart-btn:hover {
+        background-color: #1e3d1a;
+        border-color: #1e3d1a;
+    }
+    
+    .vintage-outdoor .product-price {
+        color: #d4af37;
+    }
+    
+    .vintage-outdoor .card {
+        border: 2px solid #c9b896;
+        background-color: #fffef5;
+    }
+    
+    .vintage-outdoor .btn-outline-primary {
+        color: #2d5a27;
+        border-color: #2d5a27;
+    }
+    
+    .vintage-outdoor .btn-outline-primary:hover {
+        background-color: #2d5a27;
+        color: #fffef5;
+    }
+    
+    .vintage-outdoor .form-select {
+        border-color: #c9b896;
+        background-color: #fffef5;
+    }
+    
+    .vintage-outdoor .card-header {
+        background-color: #2d5a27;
+    }
+</style>
+{% elif current_category and current_category.slug == "accessories-spare-parts" %}
+<style>
+    /* Accessories/Spare Parts Blue Technical Theme */
+    .accessories-theme {
+        background-color: #f0f5f9;
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a8c8e8' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    .accessories-theme h1, .accessories-theme h2, .accessories-theme h3, .accessories-theme h4, .accessories-theme h5 {
+        font-family: 'Arial', 'Helvetica', sans-serif;
+        color: #1e4d7c;
+    }
+    
+    .accessories-theme .breadcrumb-item a {
+        color: #3a7ca5;
+    }
+    
+    .accessories-theme .breadcrumb-item.active {
+        color: #1e4d7c;
+    }
+    
+    .accessories-theme .product-card {
+        border: 2px solid #a8c8e8;
+        border-radius: 8px;
+        background-color: #ffffff;
+    }
+    
+    .accessories-theme .product-card:hover {
+        border-color: #1e4d7c;
+        box-shadow: 0 4px 12px rgba(30, 77, 124, 0.3);
+    }
+    
+    .accessories-theme .add-to-cart-btn {
+        background-color: #1e4d7c;
+        border-color: #1e4d7c;
+    }
+    
+    .accessories-theme .add-to-cart-btn:hover {
+        background-color: #153a5f;
+        border-color: #153a5f;
+    }
+    
+    .accessories-theme .product-price {
+        color: #3a7ca5;
+    }
+    
+    .accessories-theme .card {
+        border: 2px solid #a8c8e8;
+        background-color: #ffffff;
+    }
+    
+    .accessories-theme .btn-outline-primary {
+        color: #1e4d7c;
+        border-color: #1e4d7c;
+    }
+    
+    .accessories-theme .btn-outline-primary:hover {
+        background-color: #1e4d7c;
+        color: #ffffff;
+    }
+    
+    .accessories-theme .form-select {
+        border-color: #a8c8e8;
+        background-color: #ffffff;
+    }
+    
+    .accessories-theme .card-header {
+        background-color: #1e4d7c;
+    }
+</style>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<!-- Shop Page Banner -->
+<div class="bg-dark text-white py-4 mb-4">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h3 class="mb-2">EXCLUSIVE ONLINE OFFER!</h3>
+                <p class="mb-0">Shop any 2 items from the same category and get 15% OFF automatically at checkout!</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <div class="d-flex justify-content-center justify-content-md-end gap-3" id="mini-countdown">
+                    <div class="text-center">
+                        <div class="bg-secondary rounded px-2 py-1">
+                            <span class="fw-bold" id="mini-hours">24</span>
+                        </div>
+                        <small>HRS</small>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-secondary rounded px-2 py-1">
+                            <span class="fw-bold" id="mini-minutes">00</span>
+                        </div>
+                        <small>MIN</small>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-secondary rounded px-2 py-1">
+                            <span class="fw-bold" id="mini-seconds">00</span>
+                        </div>
+                        <small>SEC</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bestsellers Banner -->
+{% if bestseller_banner %}
+<div class="container-fluid p-0 mb-4">
+    <div class="row g-0">
+        <div class="col-md-6">
+            {% if bestseller_banner.image %}
+                <img src="{{ bestseller_banner.image.url }}" alt="{{ bestseller_banner.alt_text|default:'Bestsellers' }}" class="img-fluid h-100" style="object-fit: cover;">
+            {% else %}
+                <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 300px;">
+                    <i class="fas fa-image fa-3x text-white"></i>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-6 d-flex align-items-center" style="background-color: #f8f8f0;">
+            <div class="p-4 p-md-5">
+                <h3 class="mb-3">{{ bestseller_banner.title|default:"Discover Our Bestsellers" }}</h3>
+                <p class="mb-4">{{ bestseller_banner.description|default:"Experience the quality of our outdoor equipment with our most loved products. Perfect for all types of adventures and outdoor activities." }}</p>
+                <a href="{% if bestseller_banner.link_url %}{{ bestseller_banner.link_url }}{% else %}#products-section{% endif %}" class="btn btn-dark">Shop Now</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="container-fluid p-0 mb-4">
+    <div class="row g-0">
+        <div class="col-md-6">
+            <img src="/static/images/1 (12).jpg" alt="Featured Products" class="img-fluid h-100" style="object-fit: cover;">
+        </div>
+        <div class="col-md-6 d-flex align-items-center" style="background-color: #f8f8f0;">
+            <div class="p-4 p-md-5">
+                <h3 class="mb-3">{{ bestseller_banner.title|default:"Discover Our Bestsellers" }}</h3>
+                <p class="mb-4">{{ bestseller_banner.description|default:"Experience the quality of our outdoor equipment with our most loved products. Perfect for all types of adventures and outdoor activities." }}</p>
+                <a href="{% if bestseller_banner.link_url %}{{ bestseller_banner.link_url }}{% else %}#products-section{% endif %}" class="btn btn-dark">Shop Now</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="container py-4 {% if current_category and current_category.slug in "portable-fridges-freezers bbq-grilling camping-equipment ice-makers heaters power-accessories" %}vintage-outdoor{% elif current_category and current_category.slug == "accessories-spare-parts" %}accessories-theme{% endif %}">
+    <!-- Advertisement Panels -->
+    {% if advertisements %}
+        <div class="position-relative mb-4">
+            <div class="d-flex gap-3 overflow-hidden" id="advertisement-carousel" style="scroll-behavior: smooth;">
+                {% for advertisement in advertisements %}
+                    <div class="flex-shrink-0" style="min-width: 180px; max-width: calc(20% - 10px);">
+                        <div class="card border overflow-hidden shadow-sm advertisement-panel" style="border-color: #e0e0e0; border-radius: 8px; min-height: 300px;">
+                            <a href="{{ advertisement.link_url|default:'#' }}" class="text-decoration-none advertisement-link" style="display: block; height: 100%;">
+                                {% if advertisement.image %}
+                                    <img src="{{ advertisement.image.url }}" alt="{{ advertisement.alt_text|default:advertisement.title }}" class="img-fluid" style="width: 100%; height: 300px; object-fit: cover;">
+                                {% else %}
+                                    <div class="d-flex align-items-center justify-content-center" style="height: 300px; background-color: #f8f9fa;">
+                                        <i class="fas fa-image fa-3x text-secondary"></i>
+                                    </div>
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Navigation Arrows -->
+            <button class="position-absolute top-50 start-0 translate-middle-y btn btn-dark rounded-circle shadow" 
+                    style="z-index: 10; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;"
+                    onclick="scrollAdvertisements('left')">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="position-absolute top-50 end-0 translate-middle-y btn btn-dark rounded-circle shadow" 
+                    style="z-index: 10; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center;"
+                    onclick="scrollAdvertisements('right')">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    {% endif %}
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'store:home' %}" class="text-decoration-none text-dark">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Shop</li>
+            {% if current_category %}<li class="breadcrumb-item active" aria-current="page">{{ current_category }}</li>{% endif %}
+            {% if current_line %}<li class="breadcrumb-item active" aria-current="page">{{ current_line }}</li>{% endif %}
+            {% if current_concern %}<li class="breadcrumb-item active" aria-current="page">{{ current_concern }}</li>{% endif %}
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Sidebar Filters -->
+        <div class="col-lg-3">
+            <!-- Active Filters -->
+            {% if request.GET %}
+            <div class="card mb-4 border-0 shadow-sm {% if current_category and current_category.slug in "portable-fridges-freezers bbq-grilling camping-equipment ice-makers heaters power-accessories" %}vintage-outdoor{% elif current_category and current_category.slug == "accessories-spare-parts" %}accessories-theme{% endif %}">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Active Filters</h5>
+                </div>
+                <div class="card-body" style="background-color: #f8f8f0;">
+                    <div class="d-flex flex-wrap gap-2">
+                        {% if request.GET.category %}
+                        <a href="{% url 'store:shop' %}" class="badge bg-dark text-decoration-none">
+                            Category: {{ request.GET.category|title }} <i class="fas fa-times-circle ms-1"></i>
+                        </a>
+                        {% endif %}
+                        {% if request.GET.line %}
+                        <a href="{% url 'store:shop' %}" class="badge bg-dark text-decoration-none">
+                            Line: {{ request.GET.line }} <i class="fas fa-times-circle ms-1"></i>
+                        </a>
+                        {% endif %}
+                        {% if request.GET.concern %}
+                        <a href="{% url 'store:shop' %}" class="badge bg-dark text-decoration-none">
+                            Concern: {{ request.GET.concern }} <i class="fas fa-times-circle ms-1"></i>
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'store:shop' %}" class="badge bg-danger text-decoration-none">
+                            Clear All <i class="fas fa-times-circle ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Price Range -->
+            <div class="card mb-4 border-0 shadow-sm {% if current_category and current_category.slug in "portable-fridges-freezers bbq-grilling camping-equipment ice-makers heaters power-accessories" %}vintage-outdoor{% elif current_category and current_category.slug == "accessories-spare-parts" %}accessories-theme{% endif %}">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Price Range</h5>
+                </div>
+                <div class="card-body" style="background-color: #f8f8f0;">
+                    <form action="" method="get">
+                        {% for key, value in request.GET.items %}
+                            {% if key != 'min_price' and key != 'max_price' %}
+                                <input type="hidden" name="{{ key }}" value="{{ value }}">
+                            {% endif %}
+                        {% endfor %}
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label for="min-price" class="form-label small">Min Price:</label>
+                                <input type="number" class="form-control form-control-sm" id="min-price" name="min_price" placeholder="0" value="{{ request.GET.min_price|default:'' }}">
+                            </div>
+                            <div class="col-6">
+                                <label for="max-price" class="form-label small">Max Price:</label>
+                                <input type="number" class="form-control form-control-sm" id="max-price" name="max_price" placeholder="50000" value="{{ request.GET.max_price|default:'' }}">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-dark btn-sm w-100">Apply Filter</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card mb-4 border-0 shadow-sm {% if current_category and current_category.slug in "portable-fridges-freezers bbq-grilling camping-equipment ice-makers heaters power-accessories" %}vintage-outdoor{% elif current_category and current_category.slug == "accessories-spare-parts" %}accessories-theme{% endif %}">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Categories</h5>
+                </div>
+                <div class="card-body" style="background-color: #f8f8f0;">
+                    <ul class="list-unstyled">
+                        {% for category in categories %}
+                            <li class="mb-2">
+                                <a href="{% url 'store:shop' %}?category={{ category.slug }}" class="text-decoration-none text-dark d-flex justify-content-between align-items-center">
+                                    <span>{{ category.name }}</span>
+                                    <span class="badge bg-secondary rounded-pill">{{ category.product_count|default:"0" }}</span>
+                                </a>
+                                {% if category.subcategories.all %}
+                                    <ul class="list-unstyled ms-3 mt-1">
+                                        {% for subcategory in category.subcategories.all %}
+                                            <li class="mb-1">
+                                                <a href="{% url 'store:shop' %}?category={{ subcategory.slug }}" class="text-decoration-none text-secondary d-flex justify-content-between align-items-center">
+                                                    <span>{{ subcategory.name }}</span>
+                                                    <span class="badge bg-secondary rounded-pill">{{ subcategory.product_count|default:"0" }}</span>
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mb-4 border-0 shadow-sm {% if current_category and current_category.slug in "portable-fridges-freezers bbq-grilling camping-equipment ice-makers heaters power-accessories" %}vintage-outdoor{% elif current_category and current_category.slug == "accessories-spare-parts" %}accessories-theme{% endif %}">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Product Lines</h5>
+                </div>
+                <div class="card-body" style="background-color: #f8f8f0;">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="{% url 'store:shop' %}" class="text-decoration-none text-dark d-flex align-items-center">
+                                <i class="fas fa-fire me-2 text-secondary"></i> BBQ Grills
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'store:shop' %}" class="text-decoration-none text-dark d-flex align-items-center">
+                                <i class="fas fa-mobile-alt me-2 text-secondary"></i> Rugged Phones
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'store:shop' %}" class="text-decoration-none text-dark d-flex align-items-center">
+                                <i class="fas fa-tablet-alt me-2 text-secondary"></i> Tablets
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'store:shop' %}" class="text-decoration-none text-dark d-flex align-items-center">
+                                <i class="fas fa-snowflake me-2 text-secondary"></i> Portable Fridges
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'store:shop' %}" class="text-decoration-none text-dark d-flex align-items-center">
+                                <i class="fas fa-fire me-2 text-secondary"></i> BBQ Equipment
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'store:shop' %}" class="text-decoration-none text-dark d-flex align-items-center">
+                                <i class="fas fa-campground me-2 text-secondary"></i> Camping Gear
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card border-0 shadow-sm {% if current_category and current_category.slug in "portable-fridges-freezers bbq-grilling camping-equipment ice-makers heaters power-accessories" %}vintage-outdoor{% elif current_category and current_category.slug == "accessories-spare-parts" %}accessories-theme{% endif %}">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Outdoor Categories</h5>
+                </div>
+                <div class="card-body" style="background-color: #f8f8f0;">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="{% url 'store:shop' %}?category=portable-fridges-freezers" class="text-decoration-none text-dark">Portable Fridges & Freezers</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'store:shop' %}?category=bbq-grilling" class="text-decoration-none text-dark">BBQ & Grilling</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'store:shop' %}?category=camping-equipment" class="text-decoration-none text-dark">Camping Equipment</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'store:shop' %}?category=ice-makers" class="text-decoration-none text-dark">Ice Makers</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'store:shop' %}?category=heaters" class="text-decoration-none text-dark">Heaters</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{% url 'store:shop' %}?category=power-accessories" class="text-decoration-none text-dark">Power & Accessories</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Customer Support Banner -->
+            <div class="card mt-4 border-0 {% if current_category and current_category.slug in "portable-fridges-freezers bbq-grilling camping-equipment ice-makers heaters power-accessories" %}vintage-outdoor{% elif current_category and current_category.slug == "accessories-spare-parts" %}accessories-theme{% endif %}">
+                <div style="background-color: #f8f8f0;" class="card-body p-4 text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-headset fa-3x text-dark"></i>
+                    </div>
+                    <h5>Need Help?</h5>
+                    <p class="small mb-3">Our experts are ready to assist you with your outdoor equipment needs!</p>
+                    <a href="https://wa.me/254700000000" class="btn btn-dark btn-sm" target="_blank">
+                        <i class="fab fa-whatsapp me-2"></i> Chat With Us
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Products Grid -->
+        <div class="col-lg-9" id="products-section">
+            <!-- Sorting Options -->
+            <div class="d-flex justify-content-between align-items-center mb-4 bg-light p-3 rounded" style="background-color: #f8f8f0 !important;">
+                <p class="mb-0">Showing {{ products|length }} products</p>
+                <div class="d-flex align-items-center">
+                    <label for="sort-by" class="form-label mb-0 me-2">Sort by:</label>
+                    <select class="form-select form-select-sm" id="sort-by">
+                        <option value="default">Default</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="newest">Newest First</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row g-3">
+                {% for product in products %}
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="product-card">
+                            {% if product.is_new %}
+                                <div class="position-absolute top-0 start-0 bg-dark text-white p-2 m-2 z-1">
+                                    <small>NEW</small>
+                                </div>
+                            {% endif %}
+                            {% if product.is_sale %}
+                                <div class="position-absolute top-0 start-0 bg-danger text-white p-2 m-2 z-1">
+                                    <small>SALE</small>
+                                </div>
+                            {% endif %}
+                            <div class="product-img-container">
+                                {% for image in product.images.all %}
+                                    {% if image.is_main %}
+                                        <img src="{{ image.image.url }}" alt="{{ product.name }}" class="product-img">
+                                    {% endif %}
+                                {% empty %}
+                                    <div class="bg-light w-100 h-100 d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-image fa-3x text-secondary"></i>
+                                    </div>
+                                {% endfor %}
+                                <div class="position-absolute top-0 end-0 m-2 z-1">
+                                    <button class="btn btn-sm btn-outline-dark rounded-circle quick-view" data-product-id="{{ product.id }}" data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h6 class="product-title">{{ product.name }}</h6>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    {% if product.original_price %}
+                                        <span class="product-original-price">KSh {{ product.original_price }}</span>
+                                    {% endif %}
+                                    <span class="product-price">KSh {{ product.price }}</span>
+                                </div>
+                                <a href="{% url 'store:product_detail' product.slug %}" class="stretched-link"></a>
+                                <button class="add-to-cart-btn">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12 text-center py-5" style="background-color: #f8f8f0;">
+                        <div class="mb-4">
+                            <i class="fas fa-box-open fa-5x text-secondary"></i>
+                        </div>
+                        <h3 class="mb-3">No products found</h3>
+                        <p class="mb-4">Try adjusting your filters or check back later for new products.</p>
+                        <a href="{% url 'store:shop' %}" class="btn btn-dark">
+                            Clear Filters
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Our Brands Banner -->
+            {% if brands %}
+                <div class="my-5 p-4" style="background-color: #f8f8f0;">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h3 class="mb-3">Our Brands</h3>
+                            <p class="mb-3">Discover our trusted brands that deliver quality and reliability for all your needs.</p>
+                            <a href="{% url 'store:shop' %}" class="btn btn-dark">Explore More</a>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row g-3">
+                                {% for brand in brands %}
+                                    <div class="col-6">
+                                        <div class="card border-0 h-100">
+                                            <div style="height: 150px; background-color: #fff;" class="d-flex align-items-center justify-content-center">
+                                                {% if brand.logo %}
+                                                    <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                                {% else %}
+                                                    <i class="fas fa-image fa-3x text-secondary"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div class="card-body p-2 text-center">
+                                                <h6 class="card-title mb-1">{{ brand.name }}</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Pagination -->
+            {% if products.count > 0 and products.paginator %}
+                <nav class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        {% if products.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link bg-dark text-white" href="?page={{ products.previous_page_number }}">Previous</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link bg-dark text-white" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in products.paginator.page_range %}
+                            {% if num == products.number %}
+                                <li class="page-item active"><a class="page-link bg-dark border-dark" href="?page={{ num }}">{{ num }}</a></li>
+                            {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                                <li class="page-item"><a class="page-link text-dark" href="?page={{ num }}">{{ num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if products.has_next %}
+                            <li class="page-item">
+                                <a class="page-link bg-dark text-white" href="?page={{ products.next_page_number }}">Next</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link bg-dark text-white" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Quick View Modal -->
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="quickViewModalLabel">Product Quick View</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="quickViewContent">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="p-3 d-flex align-items-center justify-content-center" style="background-color: #f8f8f0; height: 300px;">
+                            <i class="fas fa-image fa-4x text-secondary"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Product Name</h4>
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="product-original-price">KSh 5,000</span>
+                            <span class="product-price ms-2">KSh 4,500</span>
+                        </div>
+                        <p>Loading product details...</p>
+                        <div class="d-flex gap-2 mb-3">
+                            <div class="input-group" style="max-width: 120px;">
+                                <button class="btn btn-outline-dark" type="button">-</button>
+                                <input type="text" class="form-control text-center" value="1">
+                                <button class="btn btn-outline-dark" type="button">+</button>
+                            </div>
+                            <button class="btn btn-dark flex-grow-1">Add to Cart</button>
+                        </div>
+                        <div class="mb-3">
+                            <span class="badge bg-dark me-2">Vitamin C</span>
+                            <span class="badge bg-dark me-2">Face Serum</span>
+                        </div>
+                        <a href="#" class="btn btn-link text-dark ps-0">View Full Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- WhatsApp Chat Button -->
+<div class="position-fixed" style="bottom: 20px; right: 20px; z-index: 1000;">
+    <a href="https://wa.me/254700000000" target="_blank" class="btn btn-dark rounded-circle shadow p-3" style="width: 60px; height: 60px;">
+        <i class="fab fa-whatsapp fa-2x text-white"></i>
+    </a>
+</div>
+
+<div id="alerts-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050;"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mini countdown timer
+    function updateMiniCountdown() {
+        // Set the countdown to 24 hours from now (for demo purposes)
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), 0);
+        
+        const timeLeft = tomorrow - now;
+        
+        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+        
+        document.getElementById('mini-hours').textContent = hours.toString().padStart(2, '0');
+        document.getElementById('mini-minutes').textContent = minutes.toString().padStart(2, '0');
+        document.getElementById('mini-seconds').textContent = seconds.toString().padStart(2, '0');
+    }
+    
+    // Update the countdown every second
+    updateMiniCountdown();
+    setInterval(updateMiniCountdown, 1000);
+    
+    // Advertisement carousel scroll functionality
+    function scrollAdvertisements(direction) {
+        const carousel = document.getElementById('advertisement-carousel');
+        const scrollAmount = 200; // Adjust scroll amount as needed
+        
+        if (direction === 'left') {
+            carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+        } else {
+            carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    }
+    
+    // Quick view functionality
+    const quickViewButtons = document.querySelectorAll('.quick-view');
+    quickViewButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const productId = this.getAttribute('data-product-id');
+            // Here you would typically fetch product data with AJAX
+            // For now we'll just show the modal
+            const modal = new bootstrap.Modal(document.getElementById('quickViewModal'));
+            modal.show();
+        });
+    });
+});
+</script>
+{% endblock %} 

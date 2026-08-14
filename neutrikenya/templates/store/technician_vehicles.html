@@ -1,0 +1,178 @@
+{% extends 'technician_base.html' %}
+
+{% block title %}My Vehicles - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-user-tie me-2"></i>Technician Panel</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-2" style="width: 80px; height: 80px;">
+                            <i class="fas fa-user fa-3x text-secondary"></i>
+                        </div>
+                        <h6>{{ technician.user.get_full_name }}</h6>
+                        <p class="text-muted small mb-0">{{ technician.phone }}</p>
+                    </div>
+                    <hr>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'store:technician_admin_dashboard' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <a href="{% url 'store:technician_calendar' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-calendar-alt me-2"></i>Calendar
+                        </a>
+                        <a href="{% url 'store:technician_quotations' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-file-invoice-dollar me-2"></i>My Quotations
+                        </a>
+                        <a href="{% url 'store:technician_vehicles' %}" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-truck me-2"></i>Vehicle Management
+                        </a>
+                        <a href="{% url 'store:technician_payments' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-credit-card me-2"></i>Payments
+                        </a>
+                        <a href="{% url 'store:technician_sales_report' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-chart-line me-2"></i>Sales Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-truck me-2"></i>My Vehicles</h2>
+                <a href="{% url 'store:technician_admin_dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Vehicles Table -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    {% if vehicles %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Registration</th>
+                                    <th>Make/Model</th>
+                                    <th>Year</th>
+                                    <th>Current Mileage (km)</th>
+                                    <th>Departure Mileage (km)</th>
+                                    <th>Arrival Mileage (km)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for vehicle in vehicles %}
+                                <tr>
+                                    <td><strong>{{ vehicle.registration_number }}</strong></td>
+                                    <td>{{ vehicle.make }} {{ vehicle.model }}</td>
+                                    <td>{{ vehicle.year }}</td>
+                                    <td>{{ vehicle.get_current_mileage }}</td>
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm" 
+                                               id="departure_{{ vehicle.id }}" 
+                                               placeholder="Enter departure mileage"
+                                               min="0">
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm" 
+                                               id="arrival_{{ vehicle.id }}" 
+                                               placeholder="Enter arrival mileage"
+                                               min="0">
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{% url 'store:vehicle_details' vehicle.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i> Details
+                                            </a>
+                                            <button onclick="saveMileage({{ vehicle.id }})" class="btn btn-sm btn-outline-success">
+                                                <i class="fas fa-save"></i> Save
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-truck fa-4x text-muted mb-3"></i>
+                        <p class="text-muted">No vehicles assigned to you</p>
+                        <p class="text-muted small">Contact your administrator to assign a vehicle</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function saveMileage(vehicleId) {
+    const departureMileage = document.getElementById(`departure_${vehicleId}`).value;
+    const arrivalMileage = document.getElementById(`arrival_${vehicleId}`).value;
+    
+    if (!departureMileage || !arrivalMileage) {
+        alert('Please enter both departure and arrival mileage.');
+        return;
+    }
+    
+    if (parseInt(arrivalMileage) < parseInt(departureMileage)) {
+        alert('Arrival mileage cannot be less than departure mileage.');
+        return;
+    }
+    
+    // Send data to server
+    fetch(`/add-vehicle-log/${vehicleId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: new URLSearchParams({
+            'starting_mileage': departureMileage,
+            'ending_mileage': arrivalMileage,
+            'notes': 'Daily trip log'
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Mileage saved successfully!');
+            location.reload();
+        } else {
+            alert('Error saving mileage. Please try again.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error saving mileage. Please try again.');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

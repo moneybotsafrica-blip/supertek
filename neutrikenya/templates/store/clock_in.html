@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Clock In - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-clock me-2"></i>Clock In</h2>
+                <a href="{% url 'store:technician_admin_dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Clock In Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>Start Your Shift</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="booking" class="form-label">Select Job (Optional)</label>
+                            <select class="form-select" id="booking" name="booking">
+                                <option value="">General Shift (No specific job)</option>
+                                {% for booking in assigned_bookings %}
+                                <option value="{{ booking.id }}">{{ booking.service.name }} - {{ booking.scheduled_date|date:"M d, Y H:i" }}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Select a specific job or leave blank for general shift</small>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Clocking in will start tracking your work hours. Remember to clock out when you're done.
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Clock In Now
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

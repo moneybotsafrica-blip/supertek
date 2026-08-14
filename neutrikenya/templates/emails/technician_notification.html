@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Service Booking Assignment - Mustek East Africa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .header p {
+            margin: 10px 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .booking-details {
+            background-color: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .booking-details h3 {
+            margin-top: 0;
+            color: #28a745;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+        }
+        .detail-value {
+            color: #333;
+        }
+        .urgent-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            background-color: #dc3545;
+            color: white;
+        }
+        .action-items {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .action-items h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+        .action-items ul {
+            padding-left: 20px;
+        }
+        .action-items li {
+            margin-bottom: 8px;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+        }
+        .footer a {
+            color: #28a745;
+            text-decoration: none;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .btn:hover {
+            background-color: #1e7e34;
+        }
+        .map-link {
+            color: #1e4d7c;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-bell"></i> New Service Booking Assigned</h1>
+            <p>You have been assigned a new service booking</p>
+        </div>
+        
+        <div class="content">
+            <p>Dear {{ technician_name }},</p>
+            <p>A new service booking has been assigned to you. Please review the details below and contact the customer to confirm the appointment.</p>
+            
+            <div class="booking-details">
+                <h3>Booking Details</h3>
+                <div class="detail-row">
+                    <span class="detail-label">Booking ID:</span>
+                    <span class="detail-value">#{{ booking_id }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Service:</span>
+                    <span class="detail-value">{{ service_name }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Service Type:</span>
+                    <span class="detail-value">{{ service_type }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Scheduled Date:</span>
+                    <span class="detail-value">{{ scheduled_date }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Location:</span>
+                    <span class="detail-value">{{ city }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Address:</span>
+                    <span class="detail-value">{{ address }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Customer Name:</span>
+                    <span class="detail-value">{{ customer_name }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Customer Phone:</span>
+                    <span class="detail-value">{{ customer_phone }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Customer Email:</span>
+                    <span class="detail-value">{{ customer_email }}</span>
+                </div>
+                {% if notes %}
+                <div class="detail-row">
+                    <span class="detail-label">Customer Notes:</span>
+                    <span class="detail-value">{{ notes }}</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="action-items">
+                <h3>Required Actions</h3>
+                <ul>
+                    <li>Contact the customer at <strong>{{ customer_phone }}</strong> to confirm the appointment</li>
+                    <li>Verify the address and location details</li>
+                    <li>Prepare necessary tools and equipment for the service</li>
+                    <li>Check your vehicle status and fuel level</li>
+                    <li>Log your vehicle mileage before departure</li>
+                    <li>Arrive on time and provide excellent service</li>
+                    <li>Create a quotation if additional parts/services are needed</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="{{ booking_url }}" class="btn">View Booking Details</a>
+                <br>
+                <a href="https://www.google.com/maps/search/?api=1&query={{ address|urlencode }} {{ city|urlencode }}" class="map-link" target="_blank">
+                    <i class="fas fa-map-marker-alt"></i> Get Directions to Location
+                </a>
+            </div>
+            
+            <p><strong>Service Fee Information:</strong></p>
+            <p>
+                Base Service Fee: KES {{ service_fee|floatformat:2 }}<br>
+                {% if callout_fee > 0 %}
+                Callout Fee: KES {{ callout_fee|floatformat:2 }}<br>
+                {% endif %}
+                VAT (16%): KES {{ vat_amount|floatformat:2 }}<br>
+                <strong>Total: KES {{ total_amount|floatformat:2 }}</strong>
+            </p>
+            
+            <p>If you have any questions or need assistance, please contact the dispatch team:</p>
+            <p>
+                <strong>Dispatch Phone:</strong> +254 700 000 000<br>
+                <strong>Email:</strong> dispatch@mustekea.co.ke
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p>Mustek East Africa - Technician Portal</p>
+            <p>
+                <a href="https://mustekea.co.ke">www.mustekea.co.ke</a> | 
+                <a href="mailto:dispatch@mustekea.co.ke">dispatch@mustekea.co.ke</a>
+            </p>
+            <p style="font-size: 12px; margin-top: 10px;">
+                This is an automated notification. Please do not reply to this message.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

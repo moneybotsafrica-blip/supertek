@@ -1,0 +1,853 @@
+{% extends "base.html" %}
+
+{% block title %}My Account - Mustek East Africa{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #212529;
+        --accent-color: #ffb200;
+        --border-radius: 12px;
+        --card-shadow: 0 8px 30px rgba(0,0,0,0.05);
+        --hover-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        --mpesa-color: #00a2e0;
+        --card-color: #1da64a;
+        --paypal-color: #003087;
+        --cash-color: #ff9800;
+    }
+    
+    .account-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 3rem 1rem;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+    
+    .page-title:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -10px;
+        height: 3px;
+        width: 50px;
+        background-color: var(--accent-color);
+    }
+    
+    .account-card {
+        border-radius: var(--border-radius);
+        border: none;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        height: 100%;
+    }
+    
+    .account-card:hover {
+        box-shadow: var(--hover-shadow);
+    }
+    
+    .user-profile {
+        padding: 2rem;
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    }
+    
+    .profile-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-right: 1rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .user-info h5 {
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+    
+    .nav-pills .nav-link {
+        color: #6c757d;
+        padding: 0.8rem 1rem;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+    
+    .nav-pills .nav-link i {
+        margin-right: 0.8rem;
+        font-size: 1.1rem;
+        opacity: 0.7;
+    }
+    
+    .nav-pills .nav-link:hover {
+        background-color: rgba(0,0,0,0.03);
+        color: #212529;
+    }
+    
+    .nav-pills .nav-link.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .nav-pills .nav-link.active i {
+        opacity: 1;
+    }
+    
+    .content-card {
+        border-radius: var(--border-radius);
+        border: none;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+    }
+    
+    .content-card .card-header {
+        background-color: white;
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .content-card .card-body {
+        padding: 1.8rem;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: #212529;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 0.6rem 1rem;
+        border: 1px solid #dee2e6;
+        transition: all 0.2s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #adb5bd;
+        box-shadow: 0 0 0 0.2rem rgba(0,0,0,0.05);
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        border: none;
+        border-radius: 8px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    
+    .btn-primary:hover {
+        background-color: #000;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .btn-outline-primary {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        border-radius: 8px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 500;
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .order-badge {
+        padding: 0.5rem 0.8rem;
+        font-weight: 500;
+        border-radius: 6px;
+    }
+    
+    .table {
+        border-collapse: separate;
+        border-spacing: 0 0.5rem;
+    }
+    
+    .table tbody tr {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: all 0.2s;
+    }
+    
+    .table tbody tr:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .table tbody td {
+        padding: 1rem;
+        border: none;
+        vertical-align: middle;
+    }
+    
+    .table tbody td:first-child {
+        border-radius: 10px 0 0 10px;
+    }
+    
+    .table tbody td:last-child {
+        border-radius: 0 10px 10px 0;
+    }
+    
+    .logout-btn {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        transition: all 0.3s;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.8rem;
+        margin-top: 2rem;
+    }
+    
+    .logout-btn:hover {
+        background-color: #f1f3f5;
+        color: #212529;
+    }
+    
+    .logout-btn i {
+        margin-right: 0.5rem;
+    }
+    
+    .form-section {
+        display: none;
+    }
+    
+    .form-section.active {
+        display: block;
+    }
+    
+    .payment-method-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid transparent;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    
+    .payment-method-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+    
+    .payment-method-card.selected {
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+    
+    /* Different colors for payment methods */
+    .payment-method-card[data-method="mpesa"] {
+        border-left: 3px solid var(--mpesa-color);
+    }
+    
+    .payment-method-card[data-method="card"] {
+        border-left: 3px solid var(--card-color);
+    }
+    
+    .payment-method-card[data-method="paypal"] {
+        border-left: 3px solid var(--paypal-color);
+    }
+    
+    .payment-method-card[data-method="cash"] {
+        border-left: 3px solid var(--cash-color);
+    }
+    
+    .payment-method-card[data-method="mpesa"].selected {
+        border: 2px solid var(--mpesa-color);
+        border-left: 5px solid var(--mpesa-color);
+    }
+    
+    .payment-method-card[data-method="card"].selected {
+        border: 2px solid var(--card-color);
+        border-left: 5px solid var(--card-color);
+    }
+    
+    .payment-method-card[data-method="paypal"].selected {
+        border: 2px solid var(--paypal-color);
+        border-left: 5px solid var(--paypal-color);
+    }
+    
+    .payment-method-card[data-method="cash"].selected {
+        border: 2px solid var(--cash-color);
+        border-left: 5px solid var(--cash-color);
+    }
+    
+    .payment-method-card[data-method="mpesa"].selected .card-body {
+        background-color: #e6f4ff !important;
+    }
+    
+    .payment-method-card[data-method="card"].selected .card-body {
+        background-color: #e6f9ed !important;
+    }
+    
+    .payment-method-card[data-method="paypal"].selected .card-body {
+        background-color: #e6f0ff !important;
+    }
+    
+    .payment-method-card[data-method="cash"].selected .card-body {
+        background-color: #fff3e0 !important;
+    }
+    
+    .payment-method-details {
+        display: none;
+        transition: all 0.3s ease;
+        opacity: 0;
+    }
+    
+    .payment-card-logo-group {
+        display: flex;
+        gap: 5px;
+    }
+    
+    .payment-card-logo {
+        height: 30px;
+        object-fit: contain;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        color: #dee2e6;
+        margin-bottom: 1rem;
+    }
+    
+    .empty-state h4 {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .empty-state p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Progress indicator */
+    .progress-indicator {
+        margin-top: 1.5rem;
+    }
+    
+    .progress-indicator .progress {
+        height: 0.6rem;
+        border-radius: 1rem;
+        overflow: hidden;
+        background-color: #f0f0f0;
+    }
+    
+    /* Animation for content transitions */
+    .tab-pane.fade {
+        transition: opacity 0.2s linear;
+    }
+    
+    .tab-pane.fade:not(.show) {
+        opacity: 0;
+    }
+    
+    .tab-pane.fade.show {
+        opacity: 1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="account-container">
+    <h1 class="page-title">My Account</h1>
+    
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <div class="account-card">
+                <div class="user-profile">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="profile-avatar">
+                            {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                        </div>
+                        <div class="user-info">
+                            <h5>{{ user.get_full_name }}</h5>
+                            <span class="text-muted small">{{ user.email }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="nav flex-column nav-pills" id="account-tabs" role="tablist">
+                        <button class="nav-link {% if active_tab == 'profile' %}active{% endif %}" id="profile-tab" data-bs-toggle="pill" data-bs-target="#profile-content" type="button" role="tab">
+                            <i class="fas fa-user-circle"></i> Account Information
+                        </button>
+                        <button class="nav-link {% if active_tab == 'orders' %}active{% endif %}" id="orders-tab" data-bs-toggle="pill" data-bs-target="#orders-content" type="button" role="tab">
+                            <i class="fas fa-shopping-bag"></i> Order History
+                        </button>
+                        <button class="nav-link {% if active_tab == 'addresses' %}active{% endif %}" id="addresses-tab" data-bs-toggle="pill" data-bs-target="#addresses-content" type="button" role="tab">
+                            <i class="fas fa-map-marker-alt"></i> Addresses
+                        </button>
+                        <button class="nav-link {% if active_tab == 'payment' %}active{% endif %}" id="payment-tab" data-bs-toggle="pill" data-bs-target="#payment-content" type="button" role="tab">
+                            <i class="fas fa-credit-card"></i> Payment Methods
+                        </button>
+                    </div>
+                    
+                    <a href="{% url 'logout' %}" class="btn logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-9">
+            <div class="tab-content">
+                <!-- Profile Tab -->
+                <div class="tab-pane fade {% if active_tab == 'profile' %}show active{% endif %}" id="profile-content" role="tabpanel">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="section-title mb-0">Account Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" id="profile-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="profile">
+                                
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mb-3 mb-md-0">
+                                        <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                                        {{ form.first_name }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                                        {{ form.last_name }}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                                    {{ form.email }}
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number</label>
+                                    {{ form.phone }}
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        {{ form.receive_newsletter }}
+                                        <label class="form-check-label" for="{{ form.receive_newsletter.id_for_label }}">
+                                            Receive newsletters and promotional emails
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="{{ form.preferred_currency.id_for_label }}" class="form-label">Preferred Currency</label>
+                                    {{ form.preferred_currency }}
+                                </div>
+                                
+                                <div class="d-flex flex-wrap gap-3 justify-content-between">
+                                    <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+                                    <a href="{% url 'password_change' %}" class="btn btn-outline-primary">Change Password</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Orders Tab -->
+                <div class="tab-pane fade {% if active_tab == 'orders' %}show active{% endif %}" id="orders-content" role="tabpanel">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="section-title mb-0">Order History</h3>
+                        </div>
+                        <div class="card-body">
+                            {% if orders %}
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Order #</th>
+                                                <th>Date</th>
+                                                <th>Status</th>
+                                                <th>Total</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for order in orders %}
+                                            <tr>
+                                                <td><strong>#{{ order.id }}</strong></td>
+                                                <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                                <td>
+                                                    <span class="order-badge 
+                                                        {% if order.status == 'pending' %}bg-warning
+                                                        {% elif order.status == 'processing' %}bg-info
+                                                        {% elif order.status == 'shipped' %}bg-primary
+                                                        {% elif order.status == 'delivered' %}bg-success
+                                                        {% else %}bg-secondary{% endif %}">
+                                                        {{ order.get_status_display }}
+                                                    </span>
+                                                </td>
+                                                <td><strong>KES {{ order.total_price }}</strong></td>
+                                                <td>
+                                                    <a href="{% url 'store:order_detail' order_id=order.id %}" class="btn btn-sm btn-primary">View</a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="empty-state">
+                                    <i class="fas fa-shopping-bag"></i>
+                                    <h4>No Orders Yet</h4>
+                                    <p>You haven't placed any orders yet.</p>
+                                    <a href="{% url 'store:shop' %}" class="btn btn-primary">Start Shopping</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Addresses Tab -->
+                <div class="tab-pane fade {% if active_tab == 'addresses' %}show active{% endif %}" id="addresses-content" role="tabpanel">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="section-title mb-0">Your Addresses</h3>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" id="address-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="address">
+                                
+                                <h5 class="fw-bold mb-3">Primary Address</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="{{ form.address.id_for_label }}" class="form-label">Street Address</label>
+                                        {{ form.address }}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="{{ form.address_line2.id_for_label }}" class="form-label">Apartment, suite, etc. (optional)</label>
+                                        {{ form.address_line2 }}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6 mb-3 mb-md-0">
+                                        <label for="{{ form.city.id_for_label }}" class="form-label">City</label>
+                                        {{ form.city }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="{{ form.state_province.id_for_label }}" class="form-label">State/Province</label>
+                                        {{ form.state_province }}
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mb-3 mb-md-0">
+                                        <label for="{{ form.postal_code.id_for_label }}" class="form-label">Postal Code</label>
+                                        {{ form.postal_code }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+                                        {{ form.country }}
+                                    </div>
+                                </div>
+                                
+                                <hr class="my-4">
+                                
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        {{ form.use_alternative_address }}
+                                        <label class="form-check-label" for="{{ form.use_alternative_address.id_for_label }}">
+                                            Use Alternative Shipping Address
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div id="alternative-address" class="mt-4" style="display: none;">
+                                    <h5 class="fw-bold mb-3">Alternative Shipping Address</h5>
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <label for="{{ form.alt_address.id_for_label }}" class="form-label">Street Address</label>
+                                            {{ form.alt_address }}
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <label for="{{ form.alt_address_line2.id_for_label }}" class="form-label">Apartment, suite, etc. (optional)</label>
+                                            {{ form.alt_address_line2 }}
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6 mb-3 mb-md-0">
+                                            <label for="{{ form.alt_city.id_for_label }}" class="form-label">City</label>
+                                            {{ form.alt_city }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="{{ form.alt_state_province.id_for_label }}" class="form-label">State/Province</label>
+                                            {{ form.alt_state_province }}
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6 mb-3 mb-md-0">
+                                            <label for="{{ form.alt_postal_code.id_for_label }}" class="form-label">Postal Code</label>
+                                            {{ form.alt_postal_code }}
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="{{ form.alt_country.id_for_label }}" class="form-label">Country</label>
+                                            {{ form.alt_country }}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="btn btn-primary">Save Address Information</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Methods Tab -->
+                <div class="tab-pane fade {% if active_tab == 'payment' %}show active{% endif %}" id="payment-content" role="tabpanel">
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h3 class="section-title mb-0">Payment Methods</h3>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" id="payment-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="payment">
+                                
+                                <div class="mb-4">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card payment-method-card {% if form.initial.default_payment_method == 'mpesa' %}selected{% endif %}" data-method="mpesa">
+                                                <div class="card-body" style="background-color: #f0f9ff;">
+                                                    <div class="form-check">
+                                                        <input type="radio" class="form-check-input" name="default_payment_method" id="payment_mpesa" value="mpesa" {% if form.initial.default_payment_method == 'mpesa' %}checked{% endif %}>
+                                                        <label class="form-check-label w-100" for="payment_mpesa">
+                                                            <div class="d-flex align-items-center justify-content-between">
+                                                                <span class="fw-medium">M-Pesa</span>
+                                                                <img src="https://www.safaricom.co.ke/images/Mpesa_Logo/Mpesa-Logo.png" alt="M-Pesa" style="height: 40px;">
+                                                            </div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card payment-method-card {% if form.initial.default_payment_method == 'card' %}selected{% endif %}" data-method="card">
+                                                <div class="card-body" style="background-color: #f0f9f4;">
+                                                    <div class="form-check">
+                                                        <input type="radio" class="form-check-input" name="default_payment_method" id="payment_card" value="card" {% if form.initial.default_payment_method == 'card' %}checked{% endif %}>
+                                                        <label class="form-check-label w-100" for="payment_card">
+                                                            <div class="d-flex align-items-center justify-content-between">
+                                                                <span class="fw-medium">Credit/Debit Card</span>
+                                                                <div class="payment-card-logo-group">
+                                                                    <img src="https://cdn.visa.com/v2/assets/images/logos/visa/blue/logo.png" alt="Visa" class="payment-card-logo">
+                                                                    <img src="https://www.mastercard.com/content/dam/public/mastercardcom/na/global-site/images/logos/mc-logo-52.svg" alt="Mastercard" class="payment-card-logo">
+                                                                    <img src="https://www.discover.com/content/dam/dfs/logos-images/logos/discover/discover-logo-578x220.png" alt="Discover" class="payment-card-logo">
+                                                                </div>
+                                                            </div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card payment-method-card {% if form.initial.default_payment_method == 'paypal' %}selected{% endif %}" data-method="paypal">
+                                                <div class="card-body" style="background-color: #f5f9ff;">
+                                                    <div class="form-check">
+                                                        <input type="radio" class="form-check-input" name="default_payment_method" id="payment_paypal" value="paypal" {% if form.initial.default_payment_method == 'paypal' %}checked{% endif %}>
+                                                        <label class="form-check-label w-100" for="payment_paypal">
+                                                            <div class="d-flex align-items-center justify-content-between">
+                                                                <span class="fw-medium">PayPal</span>
+                                                                <img src="https://www.paypalobjects.com/digitalassets/c/website/marketing/na/us/logo-center/9_bdg_colored_pp_2line.svg" alt="PayPal" style="height: 40px;">
+                                                            </div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card payment-method-card {% if form.initial.default_payment_method == 'cash' %}selected{% endif %}" data-method="cash">
+                                                <div class="card-body" style="background-color: #fff9f0;">
+                                                    <div class="form-check">
+                                                        <input type="radio" class="form-check-input" name="default_payment_method" id="payment_cash" value="cash" {% if form.initial.default_payment_method == 'cash' %}checked{% endif %}>
+                                                        <label class="form-check-label w-100" for="payment_cash">
+                                                            <div class="d-flex align-items-center justify-content-between">
+                                                                <span class="fw-medium">Cash on Delivery</span>
+                                                                <img src="https://cdn-icons-png.flaticon.com/512/1786/1786059.png" alt="Cash on Delivery" style="height: 40px;">
+                                                            </div>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- M-Pesa Details -->
+                                <div id="mpesa-details" class="payment-method-details mb-4 {% if form.initial.default_payment_method == 'mpesa' %}d-block{% endif %}">
+                                    <div class="card border-0 shadow-sm" style="border-radius: 12px; background-color: #f0f9ff; border-left: 4px solid var(--mpesa-color) !important;">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <img src="https://www.safaricom.co.ke/images/Mpesa_Logo/Mpesa-Logo.png" alt="M-Pesa" style="height: 30px;" class="me-2">
+                                                <h5 class="h6 mb-0">M-Pesa Details</h5>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="{{ form.mpesa_phone.id_for_label }}" class="form-label">M-Pesa Registered Phone Number</label>
+                                                {{ form.mpesa_phone }}
+                                                <small class="text-muted">We'll send payment requests to this number during checkout</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Card Details -->
+                                <div id="card-details" class="payment-method-details mb-4 {% if form.initial.default_payment_method == 'card' %}d-block{% endif %}">
+                                    <div class="card border-0 shadow-sm" style="border-radius: 12px; background-color: #f0f9f4; border-left: 4px solid var(--card-color) !important;">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <div class="payment-card-logo-group me-2">
+                                                    <img src="https://cdn.visa.com/v2/assets/images/logos/visa/blue/logo.png" alt="Visa" class="payment-card-logo" style="height: 20px;">
+                                                    <img src="https://www.mastercard.com/content/dam/public/mastercardcom/na/global-site/images/logos/mc-logo-52.svg" alt="Mastercard" class="payment-card-logo" style="height: 20px;">
+                                                    <img src="https://www.discover.com/content/dam/dfs/logos-images/logos/discover/discover-logo-578x220.png" alt="Discover" class="payment-card-logo" style="height: 20px;">
+                                                </div>
+                                                <h5 class="h6 mb-0">Card Information</h5>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6 mb-3 mb-md-0">
+                                                    <label for="{{ form.card_type.id_for_label }}" class="form-label">Card Type</label>
+                                                    {{ form.card_type }}
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="{{ form.card_last_four.id_for_label }}" class="form-label">Last 4 Digits</label>
+                                                    {{ form.card_last_four }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="{{ form.card_expiry.id_for_label }}" class="form-label">Expiry Date (MM/YYYY)</label>
+                                                {{ form.card_expiry }}
+                                            </div>
+                                            <div class="form-text">
+                                                <i class="fas fa-lock me-1"></i> For security, we only store the last 4 digits of your card. You'll need to enter your full card details during checkout.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="btn btn-primary">Save Payment Information</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Setup for alternative address toggle
+        const useAltAddress = document.getElementById('{{ form.use_alternative_address.id_for_label }}');
+        const altAddressSection = document.getElementById('alternative-address');
+        
+        if (useAltAddress && altAddressSection) {
+            // Initial state
+            if (useAltAddress.checked) {
+                altAddressSection.style.display = 'block';
+            }
+            
+            // Toggle on change
+            useAltAddress.addEventListener('change', function() {
+                if (this.checked) {
+                    altAddressSection.style.display = 'block';
+                } else {
+                    altAddressSection.style.display = 'none';
+                }
+            });
+        }
+        
+        // Payment method selection
+        const paymentCards = document.querySelectorAll('.payment-method-card');
+        const paymentRadios = document.querySelectorAll('input[name="default_payment_method"]');
+        const methodDetails = {
+            'mpesa': document.getElementById('mpesa-details'),
+            'card': document.getElementById('card-details'),
+            'paypal': null,
+            'cash': null
+        };
+        
+        // Handle payment method selection
+        paymentCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const method = this.dataset.method;
+                const radio = document.getElementById('payment_' + method);
+                
+                // Select this radio button
+                if (radio) {
+                    radio.checked = true;
+                }
+                
+                // Update UI
+                paymentCards.forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                // Fancy animation for showing/hiding method details
+                Object.keys(methodDetails).forEach(key => {
+                    if (methodDetails[key]) {
+                        if (key === method) {
+                            methodDetails[key].style.display = 'block';
+                            setTimeout(() => {
+                                methodDetails[key].style.opacity = '1';
+                            }, 10);
+                        } else {
+                            methodDetails[key].style.opacity = '0';
+                            setTimeout(() => {
+                                methodDetails[key].style.display = 'none';
+                            }, 300);
+                        }
+                    }
+                });
+            });
+        });
+        
+        // Initial setup for payment details visibility
+        paymentRadios.forEach(radio => {
+            if (radio.checked && methodDetails[radio.value]) {
+                methodDetails[radio.value].style.display = 'block';
+                methodDetails[radio.value].style.opacity = '1';
+            }
+        });
+    });
+</script>
+{% endblock %} 

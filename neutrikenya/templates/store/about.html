@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - Mustek East Africa{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<div class="bg-dark text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <h1 class="display-5 fw-bold mb-3">Our Story</h1>
+                <p class="lead mb-4">Your trusted supplier of outdoor and camping equipment in Kenya.</p>
+            </div>
+            <div class="col-md-5 text-center">
+                <div class="p-4 bg-secondary rounded-circle d-inline-block">
+                    <i class="fas fa-campground fa-6x text-white"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Breadcrumb -->
+<div class="bg-light py-2">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'store:home' %}" class="text-decoration-none text-dark">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">About Us</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<!-- About Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center mb-5">
+            <div class="col-md-6 mb-4 mb-md-0">
+                <div class="bg-light rounded p-2">
+                    <img src="/static/images/camping-gear.jpg" alt="Outdoor Equipment" class="img-fluid rounded">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2 class="mb-4">Welcome to Mustek East Africa</h2>
+                <p class="mb-4">At Mustek East Africa, we are proud to be your trusted supplier of outdoor and camping equipment in Kenya. Founded with a passion for outdoor adventures and quality equipment, we've dedicated ourselves to offering reliable, durable, and affordable products for all your outdoor needs.</p>
+                <p>Our mission is to empower outdoor enthusiasts to explore with confidence through products that combine quality engineering with practical design, ensuring you're well-equipped for every adventure.</p>
+            </div>
+        </div>
+        
+        <!-- Our Values Section -->
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h3 class="mb-5">Our Values</h3>
+            </div>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body p-4">
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-leaf fa-2x text-success"></i>
+                        </div>
+                        <h4 class="h5 mb-3">Natural Ingredients</h4>
+                        <p class="mb-0">We believe in providing quality outdoor equipment. Our products are built with durable materials that are reliable and effective for all your adventures.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body p-4">
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-flask fa-2x text-primary"></i>
+                        </div>
+                        <h4 class="h5 mb-3">Science-Backed</h4>
+                        <p class="mb-0">All our products are backed by scientific research, ensuring that they deliver real results. We combine the best of nature with scientific innovation.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center">
+                    <div class="card-body p-4">
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-heart fa-2x text-danger"></i>
+                        </div>
+                        <h4 class="h5 mb-3">Customer-Centric</h4>
+                        <p class="mb-0">Your satisfaction is our priority. We're committed to providing exceptional customer service and products that exceed your expectations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Wholesale Section -->
+        <div class="row align-items-center">
+            <div class="col-md-6 order-md-2 mb-4 mb-md-0">
+                <div class="bg-light rounded p-2">
+                    <img src="/static/images/Wholesale Natural Body Care.jpg" alt="Wholesale Natural Body Care" class="img-fluid rounded">
+                </div>
+            </div>
+            <div class="col-md-6 order-md-1">
+                <h3 class="mb-4">Wholesale Opportunities</h3>
+                <p class="mb-4">Looking to stock outdoor and camping equipment in your store? We offer competitive wholesale prices for retailers throughout Kenya. Join our network of successful partners and bring these premium outdoor products to your customers.</p>
+                <p class="mb-4">Our wholesale program includes:</p>
+                <ul class="mb-4">
+                    <li>Competitive pricing</li>
+                    <li>Reliable delivery</li>
+                    <li>Marketing support</li>
+                    <li>Product training for your staff</li>
+                </ul>
+                <a href="{% url 'store:contact' %}" class="btn btn-dark">Contact Us for Wholesale</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WhatsApp Chat Button -->
+<div class="position-fixed" style="bottom: 20px; right: 20px; z-index: 1000;">
+    <a href="https://wa.me/254700000000" target="_blank" class="btn btn-dark rounded-circle shadow p-3" style="width: 60px; height: 60px;">
+        <i class="fab fa-whatsapp fa-2x text-white"></i>
+    </a>
+</div>
+{% endblock %} 

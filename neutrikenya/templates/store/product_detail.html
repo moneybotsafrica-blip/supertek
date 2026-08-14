@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'store:category_detail' product.category.slug %}">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+    
+    <div class="row g-5">
+        <!-- Product Images -->
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-9">
+                    <div id="productMainCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% for image in product.images.all %}
+                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                    <img src="{{ image.image.url }}" class="d-block w-100 product-detail-img" alt="{{ product.name }}">
+                                </div>
+                            {% empty %}
+                                <div class="carousel-item active">
+                                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                                        <i class="fas fa-image fa-4x text-muted"></i>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#productMainCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#productMainCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-3">
+                    {% for image in product.images.all %}
+                        <div class="mb-3">
+                            <img src="{{ image.image.url }}" class="img-thumbnail" alt="{{ product.name }}" 
+                                 data-bs-target="#productMainCarousel" data-bs-slide-to="{{ forloop.counter0 }}" 
+                                 style="cursor: pointer;">
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Info -->
+        <div class="col-md-6">
+            <h1 class="mb-3">{{ product.name }}</h1>
+            
+            <div class="d-flex align-items-center mb-3">
+                {% if product.original_price %}
+                    <span class="product-detail-original-price price">KES {{ product.original_price }}</span>
+                {% endif %}
+                <span class="product-detail-price price">KES {{ product.price }}</span>
+            </div>
+            
+            <div class="mb-4">
+                <span class="badge {% if product.stock > 0 %}bg-success{% else %}bg-danger{% endif %} mb-2">
+                    {% if product.stock > 0 %}In Stock{% else %}Out of Stock{% endif %}
+                </span>
+                {% if product.category %}
+                    <span class="badge bg-primary mb-2">{{ product.category.name }}</span>
+                {% endif %}
+                {% if product.category %}
+                    <span class="badge bg-info mb-2">{{ product.category.name }}</span>
+                {% endif %}
+            </div>
+            
+            <div class="mb-4">
+                {{ product.description|linebreaks }}
+            </div>
+            
+            {% if product.stock > 0 %}
+                <form class="add-to-cart-form" data-product-id="{{ product.id }}">
+                    {% csrf_token %}
+                    <div class="row g-3 align-items-center mb-3">
+                        <div class="col-auto">
+                            <label for="quantity" class="col-form-label">Quantity:</label>
+                        </div>
+                        <div class="col-auto">
+                            <div class="input-group" style="width: 150px;">
+                                <button class="btn btn-outline-secondary" type="button" id="decrease-quantity">-</button>
+                                <input type="number" class="form-control text-center" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}">
+                                <button class="btn btn-outline-secondary" type="button" id="increase-quantity">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
+                    </div>
+                </form>
+            {% else %}
+                <div class="alert alert-warning">
+                    This product is currently out of stock. Please check back later.
+                </div>
+            {% endif %}
+            
+            <hr class="my-4">
+            
+            <div class="d-flex justify-content-between">
+                <div>
+                    <i class="fas fa-shipping-fast me-2"></i> Free delivery on orders over KSh 5,000
+                </div>
+                <div>
+                    <i class="fas fa-shield-alt me-2"></i> Secure checkout
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Products -->
+    {% if related_products %}
+        <section class="mt-5 pt-5 border-top">
+            <h3 class="mb-4">You may also like</h3>
+            <div class="row g-4">
+                {% for product in related_products %}
+                    <div class="col-md-3">
+                        <div class="product-card">
+                            <div class="product-img-container">
+                                {% for image in product.images.all %}
+                                    {% if image.is_main %}
+                                        <img src="{{ image.image.url }}" alt="{{ product.name }}" class="product-img">
+                                    {% endif %}
+                                {% empty %}
+                                    <div class="bg-light w-100 h-100 d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="product-info">
+                                <h6 class="product-title">{{ product.name }}</h6>
+                                <div class="d-flex align-items-center">
+                                    {% if product.original_price %}
+                                        <span class="product-original-price price">KES {{ product.original_price }}</span>
+                                    {% endif %}
+                                    <span class="product-price price">KES {{ product.price }}</span>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="{% url 'store:product_detail' product.slug %}" class="btn btn-sm btn-outline-primary w-100">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+</div>
+
+<div id="alerts-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050;"></div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Quantity controls
+        const quantityInput = document.getElementById('quantity');
+        const decreaseBtn = document.getElementById('decrease-quantity');
+        const increaseBtn = document.getElementById('increase-quantity');
+        
+        if (decreaseBtn && increaseBtn && quantityInput) {
+            decreaseBtn.addEventListener('click', function() {
+                const currentValue = parseInt(quantityInput.value);
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            });
+            
+            increaseBtn.addEventListener('click', function() {
+                const currentValue = parseInt(quantityInput.value);
+                const maxValue = parseInt(quantityInput.getAttribute('max'));
+                if (currentValue < maxValue) {
+                    quantityInput.value = currentValue + 1;
+                }
+            });
+        }
+        
+        // Add to cart form submission
+        const addToCartForm = document.querySelector('.add-to-cart-form');
+        if (addToCartForm) {
+            let isSubmitting = false; // Flag to prevent multiple submissions
+            let lastClickTime = 0; // Track last click time for debouncing
+            const DEBOUNCE_DELAY = 1000; // 1 second debounce delay
+            
+            addToCartForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const currentTime = Date.now();
+                
+                // Prevent multiple submissions with debounce
+                if (isSubmitting || (currentTime - lastClickTime) < DEBOUNCE_DELAY) {
+                    return;
+                }
+                lastClickTime = currentTime;
+                isSubmitting = true;
+                
+                const productId = this.dataset.productId;
+                const quantity = document.getElementById('quantity').value;
+                const formData = new FormData();
+                formData.append('quantity', quantity);
+                formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+                
+                // Show loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding...';
+                
+                // Send AJAX request with absolute URL
+                fetch('/add-to-cart/' + productId + '/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        const alertsContainer = document.getElementById('alerts-container');
+                        const alert = document.createElement('div');
+                        alert.className = 'alert alert-success alert-dismissible fade show animate__animated animate__fadeIn';
+                        alert.innerHTML = `
+                            <strong>Success!</strong> Item added to your cart.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            <div class="mt-2">
+                                <a href="/cart/" class="btn btn-sm btn-primary">View Cart</a>
+                                <a href="/checkout/" class="btn btn-sm btn-success ms-2">Checkout</a>
+                            </div>
+                        `;
+                        alertsContainer.appendChild(alert);
+                        
+                        // Update cart count in navbar
+                        const cartCountElement = document.querySelector('.fa-shopping-cart').nextElementSibling;
+                        if (cartCountElement) {
+                            cartCountElement.textContent = data.item_count;
+                        }
+                        
+                        // Auto-dismiss alert after 5 seconds
+                        setTimeout(() => {
+                            alert.classList.add('animate__fadeOut');
+                            setTimeout(() => {
+                                alertsContainer.removeChild(alert);
+                            }, 500);
+                        }, 5000);
+                        
+                        // Reset button after alert dismisses to prevent duplicate clicks
+                        setTimeout(() => {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalBtnText;
+                            isSubmitting = false; // Reset submission flag
+                        }, 5500);
+                    } else {
+                        // Reset button on failure
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                        isSubmitting = false; // Reset submission flag
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding to cart:', error);
+                    
+                    // Reset button on error
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                    isSubmitting = false; // Reset submission flag
+                    
+                    // Show error message
+                    const alertsContainer = document.getElementById('alerts-container');
+                    const alert = document.createElement('div');
+                    alert.className = 'alert alert-danger alert-dismissible fade show';
+                    alert.innerHTML = `
+                        <strong>Error!</strong> Could not add item to cart. Please try again.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+                    alertsContainer.appendChild(alert);
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %} 

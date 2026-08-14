@@ -1,0 +1,158 @@
+{% extends 'technician_base.html' %}
+{% load calendar_tags %}
+
+{% block title %}Technician Calendar - {{ month_name }} {{ year }} - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-user-tie me-2"></i>Technician Panel</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-2" style="width: 80px; height: 80px;">
+                            <i class="fas fa-user fa-3x text-secondary"></i>
+                        </div>
+                        <h6>{{ technician.user.get_full_name }}</h6>
+                        <p class="text-muted small mb-0">{{ technician.phone }}</p>
+                    </div>
+                    <hr>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'store:technician_admin_dashboard' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <a href="{% url 'store:technician_calendar' %}" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-calendar-alt me-2"></i>Calendar
+                        </a>
+                        <a href="{% url 'store:technician_quotations' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-file-invoice-dollar me-2"></i>My Quotations
+                        </a>
+                        <a href="{% url 'store:technician_vehicles' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-truck me-2"></i>Vehicle Management
+                        </a>
+                        <a href="{% url 'store:technician_payments' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-credit-card me-2"></i>Payments
+                        </a>
+                        <a href="{% url 'store:technician_sales_report' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-chart-line me-2"></i>Sales Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-calendar-alt me-2"></i>Work Calendar</h2>
+                <a href="{% url 'store:technician_admin_dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Calendar Navigation -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <a href="{% url 'store:technician_calendar_month' prev_year prev_month %}" class="btn btn-outline-primary btn-sm me-2">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                        <h5 class="mb-0">{{ month_name }} {{ year }}</h5>
+                        <a href="{% url 'store:technician_calendar_month' next_year next_month %}" class="btn btn-outline-primary btn-sm ms-2">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                    <a href="{% url 'store:technician_calendar' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="fas fa-sync-alt me-1"></i>Today
+                    </a>
+                </div>
+                <div class="card-body">
+                    <!-- Calendar Grid -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered calendar-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-center">Sun</th>
+                                    <th class="text-center">Mon</th>
+                                    <th class="text-center">Tue</th>
+                                    <th class="text-center">Wed</th>
+                                    <th class="text-center">Thu</th>
+                                    <th class="text-center">Fri</th>
+                                    <th class="text-center">Sat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for week in cal %}
+                                <tr>
+                                    {% for day in week %}
+                                    <td class="calendar-day p-2" style="height: 100px; vertical-align: top;">
+                                        {% if day != 0 %}
+                                            <div class="calendar-date text-end mb-1">
+                                                <strong>{{ day }}</strong>
+                                            </div>
+                                            {% make_date_tag day year month as current_date %}
+                                            {% if current_date in bookings_by_date %}
+                                                {% for booking in bookings_by_date|get_item:current_date %}
+                                                <div class="calendar-event small mb-1 p-1 rounded bg-{% if booking.status == 'completed' %}success{% elif booking.status == 'in_progress' %}info{% else %}primary{% endif %} text-white">
+                                                    <a href="{% url 'store:booking_details' booking.id %}" class="text-white text-decoration-none">
+                                                        {{ booking.scheduled_date|date:"H:i" }} - {{ booking.service.name|truncatechars:15 }}
+                                                    </a>
+                                                </div>
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="mb-3">Legend</h6>
+                    <div class="d-flex gap-3">
+                        <div>
+                            <span class="badge bg-primary">Assigned</span>
+                        </div>
+                        <div>
+                            <span class="badge bg-info">In Progress</span>
+                        </div>
+                        <div>
+                            <span class="badge bg-success">Completed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.calendar-table th {
+    width: 14.28%;
+}
+.calendar-day {
+    border: 1px solid #dee2e6;
+}
+.calendar-date {
+    font-size: 0.9em;
+}
+.calendar-event {
+    font-size: 0.75em;
+    cursor: pointer;
+}
+.calendar-event:hover {
+    opacity: 0.8;
+}
+</style>
+{% endblock %}

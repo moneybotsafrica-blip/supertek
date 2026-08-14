@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Booking Confirmation - Mustek East Africa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #1e4d7c 0%, #153a5f 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .header p {
+            margin: 10px 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .booking-details {
+            background-color: #f8f9fa;
+            border-left: 4px solid #1e4d7c;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .booking-details h3 {
+            margin-top: 0;
+            color: #1e4d7c;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+        }
+        .detail-value {
+            color: #333;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .status-assigned {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .payment-info {
+            background-color: #e8f4fd;
+            border: 1px solid #b8daff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .payment-info h3 {
+            margin-top: 0;
+            color: #004085;
+        }
+        .total-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e4d7c;
+        }
+        .next-steps {
+            margin: 20px 0;
+        }
+        .next-steps ol {
+            padding-left: 20px;
+        }
+        .next-steps li {
+            margin-bottom: 10px;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+        }
+        .footer a {
+            color: #1e4d7c;
+            text-decoration: none;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #1e4d7c;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .btn:hover {
+            background-color: #153a5f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-check-circle"></i> Booking Confirmed!</h1>
+            <p>Your service booking has been successfully created</p>
+        </div>
+        
+        <div class="content">
+            <p>Dear {{ customer_name }},</p>
+            <p>Thank you for choosing Mustek East Africa for your service needs. We are pleased to confirm your booking details below:</p>
+            
+            <div class="booking-details">
+                <h3>Booking Details</h3>
+                <div class="detail-row">
+                    <span class="detail-label">Booking ID:</span>
+                    <span class="detail-value">#{{ booking_id }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Service:</span>
+                    <span class="detail-value">{{ service_name }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Service Type:</span>
+                    <span class="detail-value">{{ service_type }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Scheduled Date:</span>
+                    <span class="detail-value">{{ scheduled_date }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Location:</span>
+                    <span class="detail-value">{{ city }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Address:</span>
+                    <span class="detail-value">{{ address }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Contact Phone:</span>
+                    <span class="detail-value">{{ phone }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span class="detail-value">
+                        <span class="status-badge {% if status == 'assigned' %}status-assigned{% else %}status-pending{% endif %}">
+                            {{ status }}
+                        </span>
+                    </span>
+                </div>
+                {% if technician_name %}
+                <div class="detail-row">
+                    <span class="detail-label">Assigned Technician:</span>
+                    <span class="detail-value">{{ technician_name }}</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="payment-info">
+                <h3>Payment Information</h3>
+                <div class="detail-row">
+                    <span class="detail-label">Service Fee:</span>
+                    <span class="detail-value">KES {{ service_fee|floatformat:2 }}</span>
+                </div>
+                {% if callout_fee > 0 %}
+                <div class="detail-row">
+                    <span class="detail-label">Callout Fee:</span>
+                    <span class="detail-value">KES {{ callout_fee|floatformat:2 }}</span>
+                </div>
+                {% endif %}
+                <div class="detail-row">
+                    <span class="detail-label">VAT (16%):</span>
+                    <span class="detail-value">KES {{ vat_amount|floatformat:2 }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Total Amount:</span>
+                    <span class="detail-value total-amount">KES {{ total_amount|floatformat:2 }}</span>
+                </div>
+                <p><small>Payment will be collected after the technician completes the service assessment.</small></p>
+            </div>
+            
+            <div class="next-steps">
+                <h3>What Happens Next</h3>
+                <ol>
+                    <li>A confirmation email has been sent to your registered email address</li>
+                    <li>The assigned technician will contact you to confirm the appointment</li>
+                    <li>On the scheduled date, the technician will visit your location</li>
+                    <li>After assessment, you'll receive a detailed quotation if additional parts/services are needed</li>
+                    <li>Payment can be made via M-Pesa, Card, Bank Transfer, or Cash</li>
+                </ol>
+            </div>
+            
+            <div style="text-align: center;">
+                <a href="{{ booking_url }}" class="btn">View Your Booking</a>
+            </div>
+            
+            <p>If you have any questions or need to reschedule, please contact us:</p>
+            <p>
+                <strong>Phone:</strong> +254 700 000 000<br>
+                <strong>Email:</strong> info@mustekea.co.ke
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p>Mustek East Africa - Your Trusted Partner for Quality Services</p>
+            <p>
+                <a href="https://mustekea.co.ke">www.mustekea.co.ke</a> | 
+                <a href="mailto:info@mustekea.co.ke">info@mustekea.co.ke</a>
+            </p>
+            <p style="font-size: 12px; margin-top: 10px;">
+                This is an automated email. Please do not reply to this message.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

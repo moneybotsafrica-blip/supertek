@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Quotation - Mustek East Africa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; }
+            .card { border: none !important; box-shadow: none !important; }
+        }
+        .print-only { display: none; }
+        .company-header {
+            background: linear-gradient(135deg, #1e4d7c 0%, #153a5f 100%);
+            color: white;
+        }
+        .company-logo {
+            max-height: 80px;
+            max-width: 200px;
+        }
+        .quotation-header {
+            background-color: #f8f9fa;
+            border-left: 4px solid #1e4d7c;
+        }
+        .total-section {
+            background-color: #f8f9fa;
+            border-top: 2px solid #1e4d7c;
+        }
+        .signature-section {
+            border-top: 1px solid #dee2e6;
+            margin-top: 40px;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <div class="card shadow">
+            <!-- Header -->
+            <div class="card-body">
+                <div class="row company-header p-4 mb-4 rounded">
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center mb-2">
+                            {% if site_settings.logo %}
+                            <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" class="company-logo me-3">
+                            {% else %}
+                            <i class="fas fa-cogs fa-2x me-3"></i>
+                            {% endif %}
+                            <div>
+                                <h2 class="mb-1">{{ site_settings.site_name }}</h2>
+                                <p class="mb-0">Professional Installation & Repair Services</p>
+                            </div>
+                        </div>
+                        <small>{{ site_settings.address|default:"Nairobi, Kenya" }} | Phone: {{ site_settings.contact_phone|default:"+254 700 000 000" }} | Email: {{ site_settings.contact_email|default:"info@mustekea.co.ke" }}</small>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <h4 class="mb-0">SERVICE QUOTATION</h4>
+                        <small class="text-white-50">{{ quotation.quotation_number }}</small>
+                    </div>
+                </div>
+
+                <!-- Quotation Details -->
+                <div class="quotation-header p-3 mb-4 rounded">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-2">Customer Details</h6>
+                            <p class="mb-1"><strong>Name:</strong> {{ booking.customer.get_full_name }}</p>
+                            <p class="mb-1"><strong>Phone:</strong> {{ booking.phone }}</p>
+                            <p class="mb-1"><strong>Address:</strong> {{ booking.address }}</p>
+                            <p class="mb-0"><strong>City:</strong> {{ booking.city }}</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h6 class="fw-bold mb-2">Quotation Details</h6>
+                            <p class="mb-1"><strong>Date:</strong> {{ quotation.created_at|date:"F j, Y" }}</p>
+                            <p class="mb-1"><strong>Valid Until:</strong> {{ quotation.valid_until|date:"F j, Y" }}</p>
+                            <p class="mb-1"><strong>Service:</strong> {{ booking.service.name }}</p>
+                            <p class="mb-0"><strong>Booking ID:</strong> #{{ booking.id }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Description -->
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-2">Service Description</h6>
+                    <p class="text-muted">{{ booking.service.description }}</p>
+                    {% if booking.notes %}
+                    <p class="text-muted"><strong>Customer Notes:</strong> {{ booking.notes }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Quotation Items -->
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Description</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-end">Unit Price (KES)</th>
+                                <th class="text-end">Total (KES)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Labor -->
+                            <tr>
+                                <td>
+                                    <strong>Labor Charges</strong><br>
+                                    <small class="text-muted">Professional service fee</small>
+                                </td>
+                                <td class="text-center">1</td>
+                                <td class="text-end">{{ quotation.labor_cost|floatformat:2 }}</td>
+                                <td class="text-end">{{ quotation.labor_cost|floatformat:2 }}</td>
+                            </tr>
+                            
+                            <!-- Spare Parts -->
+                            {% for item in quotation.items.all %}
+                            <tr>
+                                <td>
+                                    <strong>{{ item.description }}</strong>
+                                    {% if item.product %}
+                                    <br><small class="text-muted">Product: {{ item.product.name }}</small>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{ item.quantity }}</td>
+                                <td class="text-end">{{ item.unit_price|floatformat:2 }}</td>
+                                <td class="text-end">{{ item.total_price|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Totals -->
+                <div class="total-section p-4 rounded">
+                    <div class="row">
+                        <div class="col-md-6 offset-md-6">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal (Labor + Parts):</span>
+                                <span>KES {{ quotation.labor_cost|add:quotation.parts_cost|floatformat:2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>VAT (16%):</span>
+                                <span>KES {{ quotation.vat_amount|floatformat:2 }}</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold fs-5">
+                                <span>Total Amount:</span>
+                                <span class="text-primary">KES {{ quotation.total_amount|floatformat:2 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="fw-bold mb-2">Terms and Conditions</h6>
+                    <ul class="small text-muted mb-0">
+                        <li>This quotation is valid for 30 days from the date of issue</li>
+                        <li>50% advance payment required before commencement of work</li>
+                        <li>Balance payment due upon completion of service</li>
+                        <li>All parts carry manufacturer warranty as applicable</li>
+                        <li>Labor warranty: 30 days from date of completion</li>
+                        <li>Prices subject to change without prior notice</li>
+                    </ul>
+                </div>
+
+                <!-- Signature Section -->
+                <div class="signature-section">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="text-center">
+                                <p class="mb-4">__________________________</p>
+                                <p class="fw-bold">Technician Signature</p>
+                                <p class="small text-muted">{{ booking.technician.user.get_full_name if booking.technician else 'N/A' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-center">
+                                <p class="mb-4">__________________________</p>
+                                <p class="fw-bold">Customer Signature</p>
+                                <p class="small text-muted">Date: _______________</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Share Buttons -->
+                <div class="no-print mt-4 text-center">
+                    <div class="btn-group" role="group">
+                        <button onclick="window.print()" class="btn btn-primary btn-lg">
+                            <i class="fas fa-print me-2"></i>Print
+                        </button>
+                        <button onclick="downloadPDF()" class="btn btn-success btn-lg">
+                            <i class="fas fa-download me-2"></i>Download PDF
+                        </button>
+                        <button onclick="sendEmail()" class="btn btn-info btn-lg">
+                            <i class="fas fa-envelope me-2"></i>Send Email
+                        </button>
+                    </div>
+                    {% if request.user.technician_profile %}
+                        <a href="{% url 'store:technician_quotations' %}" class="btn btn-secondary btn-lg ms-2">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Quotations
+                        </a>
+                    {% else %}
+                        <a href="{% url 'store:my_bookings' %}" class="btn btn-secondary btn-lg ms-2">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Bookings
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-4 text-muted small no-print">
+            <p>Mustek East Africa - Your Trusted Partner for Quality Services</p>
+            <p>www.mustekea.co.ke | info@mustekea.co.ke | +254 700 000 000</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        function downloadPDF() {
+            const element = document.querySelector('.card');
+            const quotationNum = '{{ quotation.quotation_number }}';
+            
+            const opt = {
+                margin: 0.5,
+                filename: `quotation_${quotationNum}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(element).save();
+        }
+        
+        function sendEmail() {
+            const customerEmail = '{{ booking.customer.email }}';
+            const quotationNum = '{{ quotation.quotation_number }}';
+            
+            if (customerEmail) {
+                const subject = encodeURIComponent(`Quotation ${quotationNum} - Mustek East Africa`);
+                const body = encodeURIComponent(`Dear {{ booking.customer.get_full_name }},\n\nPlease find attached quotation ${quotationNum} for your service booking.\n\nIf you have any questions, please don't hesitate to contact us.\n\nBest regards,\nMustek East Africa Team`);
+                
+                window.location.href = `mailto:${customerEmail}?subject=${subject}&body=${body}`;
+            } else {
+                alert('Customer email address not available.');
+            }
+        }
+    </script>
+</body>
+</html>

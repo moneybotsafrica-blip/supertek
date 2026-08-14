@@ -1,0 +1,273 @@
+{% extends 'technician_base.html' %}
+
+{% block title %}Technician Admin Panel - Mustek East Africa{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Admin Sidebar -->
+        <div class="col-md-2 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-user-shield me-2"></i>Admin Panel</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'store:technician_admin_dashboard' %}" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <a href="{% url 'store:technician_calendar' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-calendar-alt me-2"></i>Calendar
+                        </a>
+                        <a href="{% url 'store:technician_sales_report' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-chart-line me-2"></i>Sales Report
+                        </a>
+                        <a href="{% url 'store:technician_vehicles' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-truck me-2"></i>Vehicles
+                        </a>
+                        <a href="{% url 'store:technician_quotations' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-file-invoice-dollar me-2"></i>Quotations
+                        </a>
+                        <a href="{% url 'store:technician_payments' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-credit-card me-2"></i>Payments
+                        </a>
+                        <a href="{% url 'store:technician_profile' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-user-cog me-2"></i>Profile
+                        </a>
+                        <a href="{% url 'logout' %}" class="list-group-item list-group-item-action text-danger">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-10">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">Technician Admin Dashboard</h2>
+                    <p class="text-muted mb-0">Welcome, {{ technician.user.get_full_name }}</p>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-{% if technician.is_available %}success{% else %}danger{% endif %}">
+                        {% if technician.is_available %}Available{% else %}Unavailable{% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-1">Assigned Jobs</h6>
+                                    <h3 class="mb-0">{{ assigned_bookings.count }}</h3>
+                                </div>
+                                <div class="text-primary">
+                                    <i class="fas fa-tasks fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-1">Completed</h6>
+                                    <h3 class="mb-0">{{ completed_count }}</h3>
+                                </div>
+                                <div class="text-success">
+                                    <i class="fas fa-check-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-1">Total Revenue</h6>
+                                    <h3 class="mb-0">KES {{ total_revenue|floatformat:0 }}</h3>
+                                </div>
+                                <div class="text-info">
+                                    <i class="fas fa-dollar-sign fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-1">Vehicles</h6>
+                                    <h3 class="mb-0">{{ vehicles.count }}</h3>
+                                </div>
+                                <div class="text-warning">
+                                    <i class="fas fa-truck fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <a href="{% url 'store:clock_in' %}" class="btn btn-success w-100">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Clock In
+                                    </a>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <a href="{% url 'store:clock_out' %}" class="btn btn-danger w-100">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Clock Out
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-calendar me-2"></i>Today's Schedule</h5>
+                        </div>
+                        <div class="card-body">
+                            <h4>{{ assigned_bookings.count }} bookings</h4>
+                            <p class="text-muted mb-0">Next: {% if assigned_bookings.first %}{{ assigned_bookings.first.scheduled_date|date:"H:i" }} - {{ assigned_bookings.first.service.name }}{% else %}No bookings today{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Bookings -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Recent Bookings</h5>
+                    <a href="{% url 'store:my_bookings' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Service</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Amount</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in recent_bookings %}
+                                <tr>
+                                    <td>#{{ booking.id }}</td>
+                                    <td>{{ booking.service.name }}</td>
+                                    <td>{{ booking.customer.get_full_name }}</td>
+                                    <td>{{ booking.scheduled_date|date:"M d, Y H:i" }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if booking.status == 'completed' %}success{% elif booking.status == 'in_progress' %}info{% elif booking.status == 'assigned' %}primary{% else %}warning{% endif %}">
+                                            {{ booking.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>KES {{ booking.payment_amount|floatformat:0 }}</td>
+                                    <td>
+                                        <a href="{% url 'store:booking_details' booking.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'store:print_job_card' booking.id %}" class="btn btn-sm btn-outline-secondary ms-1">
+                                            <i class="fas fa-print"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">No recent bookings</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vehicle Overview -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-truck me-2"></i>Assigned Vehicles</h5>
+                    <a href="{% url 'store:technician_vehicles' %}" class="btn btn-sm btn-outline-primary">Manage Vehicles</a>
+                </div>
+                <div class="card-body">
+                    {% if vehicles %}
+                    <div class="row">
+                        {% for vehicle in vehicles %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ vehicle.registration_number }}</h6>
+                                    <p class="text-muted small mb-1">{{ vehicle.make }} {{ vehicle.model }} ({{ vehicle.year }})</p>
+                                    <p class="text-muted small mb-0">Current Mileage: {{ vehicle.get_current_mileage }} km</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-3">No vehicles assigned</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Monthly Earnings -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Monthly Earnings</h5>
+                </div>
+                <div class="card-body">
+                    {% if monthly_earnings %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Earnings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for earning in monthly_earnings %}
+                                <tr>
+                                    <td>{{ earning.month|date:"F Y" }}</td>
+                                    <td>KES {{ earning.total|floatformat:0 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center py-3">No earnings data available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

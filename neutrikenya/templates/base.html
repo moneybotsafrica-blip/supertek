@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ site_name }}{% endblock %}</title>
+    {% if site_favicon %}
+        <link rel="icon" type="image/x-icon" href="{{ site_favicon }}">
+    {% endif %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <!-- Top Bar -->
+        <div class="top-bar bg-dark text-white py-2">
+            <div class="container d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="me-3">{{ header_message_1|default:"Orders ship next day" }}</span>
+                    <span>{{ header_message_2|default:"Logistics info updates within 1-2 working days" }}</span>
+                </div>
+                <div>
+                    <div class="dropdown d-inline-block me-3">
+                        <button class="btn btn-sm btn-dark dropdown-toggle currency-selector" type="button" id="currencyDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span id="selected-currency-flag" class="flag-icon flag-icon-ke">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 640 480">
+                                    <defs>
+                                        <path id="a" stroke-miterlimit="10" d="M-28.6 47.5l1.8 1 46.7-81c2.7-.6 4.2-3.2 5.7-5.8 1-1.8 5-8.7 6.7-17.7a58 58 0 0 0-11.9 14.7c-1.5 2.6-3 5.2-2.3 7.9z"/>
+                                    </defs>
+                                    <path fill="#fff" d="M0 0h640v480H0z"/>
+                                    <path d="M0 0h640v144H0z"/>
+                                    <path fill="#060" d="M0 336h640v144H0z"/>
+                                    <g id="b" transform="matrix(3 0 0 3 320 240)">
+                                        <use width="100%" height="100%" stroke="#000" xlink:href="#a"/>
+                                        <use width="100%" height="100%" fill="#fff" xlink:href="#a"/>
+                                    </g>
+                                    <use width="100%" height="100%" transform="matrix(-1 0 0 1 640 0)" xlink:href="#b"/>
+                                    <path fill="#b00" d="M0 144h640v192H0z"/>
+                                    <path id="c" d="M266.2 204v71.7l-19.3.3s-89.9 40.4-93 40.4c-3 0 3.3-36.2 3.3-36.2l21.8-6.7-22.4-6.7s-9.3-47.8-4.5-59.3c8.8-17.3 42-4.5 42-4.5z" fill="#000"/>
+                                    <use width="100%" height="100%" transform="matrix(-1 0 0 1 640 0)" xlink:href="#c"/>
+                                    <g fill="#fff">
+                                    <path d="M590.5 173.3a15.3 15.3 0 0 1-30.7 0 15.3 15.3 0 0 1 30.7 0z"/>
+                                    <path d="M580 173.3a5 5 0 0 1-10 0 5 5 0 0 1 10 0z"/>
+                                    </g>
+                                    <g fill="#fff">
+                                    <path d="M590.5 306.7a15.3 15.3 0 0 1-30.7 0 15.3 15.3 0 0 1 30.7 0z"/>
+                                    <path d="M580 306.7a5 5 0 0 1-10 0 5 5 0 0 1 10 0z"/>
+                                    </g>
+                                    <g fill="#fff">
+                                    <path d="M539.1 240a15.3 15.3 0 0 1-30.7 0 15.3 15.3 0 0 1 30.7 0z"/>
+                                    <path d="M528.6 240a5 5 0 0 1-10 0 5 5 0 0 1 10 0z"/>
+                                    </g>
+                                    <g fill="#fff">
+                                    <path d="M335.9 263.3a15.3 15.3 0 0 1-30.7 0 15.3 15.3 0 0 1 30.7 0z"/>
+                                    <path d="M325.4 263.3a5 5 0 0 1-10 0 5 5 0 0 1 10 0z"/>
+                                    </g>
+                                    <g fill="#fff">
+                                    <path d="M335.9 216.7a15.3 15.3 0 0 1-30.7 0 15.3 15.3 0 0 1 30.7 0z"/>
+                                    <path d="M325.4 216.7a5 5 0 0 1-10 0 5 5 0 0 1 10 0z"/>
+                                    </g>
+                                    <g fill="#fff">
+                                    <path d="M386 240a15.3 15.3 0 0 1-30.6 0 15.3 15.3 0 0 1 30.7 0z"/>
+                                    <path d="M375.6 240a5 5 0 0 1-10 0 5 5 0 0 1 10 0z"/>
+                                    </g>
+                                </svg>
+                            </span> 
+                            <span id="selected-currency">KES</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="currencyDropdown">
+                            <li><a class="dropdown-item currency-option" href="#" data-currency="KES" data-rate="1" data-flag-code="ke">
+                                <span class="flag-icon flag-icon-ke">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 640 480">
+                                        <defs>
+                                            <path id="a-ke" stroke-miterlimit="10" d="M-28.6 47.5l1.8 1 46.7-81c2.7-.6 4.2-3.2 5.7-5.8 1-1.8 5-8.7 6.7-17.7a58 58 0 0 0-11.9 14.7c-1.5 2.6-3 5.2-2.3 7.9z"/>
+                                        </defs>
+                                        <path fill="#fff" d="M0 0h640v480H0z"/>
+                                        <path d="M0 0h640v144H0z"/>
+                                        <path fill="#060" d="M0 336h640v144H0z"/>
+                                        <g id="b-ke" transform="matrix(3 0 0 3 320 240)">
+                                            <use width="100%" height="100%" stroke="#000" xlink:href="#a-ke"/>
+                                            <use width="100%" height="100%" fill="#fff" xlink:href="#a-ke"/>
+                                        </g>
+                                        <use width="100%" height="100%" transform="matrix(-1 0 0 1 640 0)" xlink:href="#b-ke"/>
+                                        <path fill="#b00" d="M0 144h640v192H0z"/>
+                                        <path id="c-ke" d="M266.2 204v71.7l-19.3.3s-89.9 40.4-93 40.4c-3 0 3.3-36.2 3.3-36.2l21.8-6.7-22.4-6.7s-9.3-47.8-4.5-59.3c8.8-17.3 42-4.5 42-4.5z" fill="#000"/>
+                                        <use width="100%" height="100%" transform="matrix(-1 0 0 1 640 0)" xlink:href="#c-ke"/>
+                                    </svg>
+                                </span> KES (Kenyan Shilling)
+                            </a></li>
+                            <li><a class="dropdown-item currency-option" href="#" data-currency="USD" data-rate="0.0078" data-flag-code="us">
+                                <span class="flag-icon flag-icon-us">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 640 480">
+                                        <path fill="#bd3d44" d="M0 0h640v480H0"/>
+                                        <path stroke="#fff" stroke-width="37" d="M0 55.3h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/>
+                                        <path fill="#192f5d" d="M0 0h364.8v258.5H0"/>
+                                        <marker id="us-a" markerHeight="30" markerWidth="30">
+                                            <path fill="#fff" d="m14 0 9 27L0 10h28L5 27z"/>
+                                        </marker>
+                                        <path fill="none" marker-mid="url(#us-a)" d="m0 0 16 11h61 61 61 61 60L47 37h61 61 60 61L16 63h61 61 61 61 60L47 89h61 61 60 61L16 115h61 61 61 61 60L47 141h61 61 60 61L16 166h61 61 61 61 60L47 192h61 61 60 61L16 218h61 61 61 61 60z"/>
+                                    </svg>
+                                </span> USD (US Dollar)
+                            </a></li>
+                            <li><a class="dropdown-item currency-option" href="#" data-currency="EUR" data-rate="0.0072" data-flag-code="eu">
+                                <span class="flag-icon flag-icon-eu">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 640 480">
+                                        <defs>
+                                            <g id="eu-d">
+                                                <g id="eu-b">
+                                                    <path id="eu-a" d="M0-1v1h.5" transform="rotate(18 0 -1)"/>
+                                                    <use transform="scale(-1 1)" xlink:href="#eu-a"/>
+                                                </g>
+                                                <g id="eu-c">
+                                                    <use transform="rotate(72)" xlink:href="#eu-b"/>
+                                                    <use transform="rotate(144)" xlink:href="#eu-b"/>
+                                                </g>
+                                                <use transform="scale(-1 1)" xlink:href="#eu-c"/>
+                                            </g>
+                                        </defs>
+                                        <path fill="#039" d="M0 0h640v480H0z"/>
+                                        <g fill="#fc0" transform="matrix(30 0 0 30 320 240)">
+                                            <use height="100%" width="100%" xlink:href="#eu-d"/>
+                                            <use height="100%" width="100%" transform="rotate(36)" xlink:href="#eu-d"/>
+                                            <use height="100%" width="100%" transform="rotate(72)" xlink:href="#eu-d"/>
+                                            <use height="100%" width="100%" transform="rotate(108)" xlink:href="#eu-d"/>
+                                            <use height="100%" width="100%" transform="rotate(144)" xlink:href="#eu-d"/>
+                                        </g>
+                                    </svg>
+                                </span> EUR (Euro)
+                            </a></li>
+                            <li><a class="dropdown-item currency-option" href="#" data-currency="GBP" data-rate="0.0062" data-flag-code="gb">
+                                <span class="flag-icon flag-icon-gb">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 640 480">
+                                        <path fill="#012169" d="M0 0h640v480H0z"/>
+                                        <path fill="#FFF" d="m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 81 480H0v-60l239-178L0 64V0h75z"/>
+                                        <path fill="#C8102E" d="m424 281 216 159v40L369 281h55zm-184 20 6 35L54 480H0l240-179zM640 0v3L391 191l2-44L590 0h50zM0 0l239 176h-60L0 42V0z"/>
+                                        <path fill="#FFF" d="M241 0v480h160V0H241zM0 160v160h640V160H0z"/>
+                                        <path fill="#C8102E" d="M0 193v96h640v-96H0zM273 0v480h96V0h-96z"/>
+                                    </svg>
+                                </span> GBP (British Pound)
+                            </a></li>
+                        </ul>
+                    </div>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'store:profile' %}" class="text-decoration-none text-white me-3">
+                        <i class="fas fa-user me-1"></i> My Account
+                    </a>
+                    <a href="{% url 'logout' %}" class="text-decoration-none text-white me-3">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                    </a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="text-decoration-none text-white me-3">
+                        <i class="fas fa-user me-1"></i> My Account
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'store:cart' %}" class="text-decoration-none text-white position-relative">
+                        <i class="fas fa-shopping-cart me-1"></i> Cart
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+                            {% if request.user.is_authenticated or request.session.session_id %}
+                                {{ cart.item_count|default:"0" }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-3">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="{% url 'store:home' %}">
+                    {% if site_logo %}
+                        <img src="{{ site_logo }}" alt="{{ site_name }}" style="height: 60px; width: auto; max-width: 200px;">
+                    {% else %}
+                        <span class="fs-3 fw-bold text-dark">{{ site_name }}</span>
+                    {% endif %}
+                </a>
+                
+                <div class="d-flex align-items-center order-lg-3">
+                    <a href="#" class="nav-link text-dark me-3">
+                        <i class="fas fa-search fs-5"></i>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="{% url 'store:home' %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="{% url 'store:shop' %}">Shop</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
+                                Categories
+                            </a>
+                            <div class="dropdown-menu mega-menu p-3">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <h5>Outdoor Equipment</h5>
+                                        <ul class="list-unstyled">
+                                            <li><a href="{% url 'store:shop' %}?category=portable-fridges-freezers" class="dropdown-item">Portable Fridges</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=bbq-grilling" class="dropdown-item">BBQ & Grilling</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=camping-equipment" class="dropdown-item">Camping Equipment</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=ice-makers" class="dropdown-item">Ice Makers</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=heaters" class="dropdown-item">Heaters</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=power-accessories" class="dropdown-item">Power & Accessories</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h5>Technology</h5>
+                                        <ul class="list-unstyled">
+                                            <li><a href="{% url 'store:shop' %}?category=rugged-phones" class="dropdown-item">Rugged Phones</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=tablets-accessories" class="dropdown-item">Tablets & Accessories</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=scanners-mobile-computers" class="dropdown-item">Scanners & Mobile Computers</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=printers-office-equipment" class="dropdown-item">Printers & Office Equipment</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=projectors" class="dropdown-item">Projectors</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=pos-systems" class="dropdown-item">POS Systems</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h5>Other Categories</h5>
+                                        <ul class="list-unstyled">
+                                            <li><a href="{% url 'store:shop' %}?category=mobility-equipment" class="dropdown-item">Mobility Equipment</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=security-systems" class="dropdown-item">Security Systems</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=coffee-beverages" class="dropdown-item">Coffee & Beverages</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=food-snacks" class="dropdown-item">Food & Snacks</a></li>
+                                            <li><a href="{% url 'store:shop' %}?category=accessories-spare-parts" class="dropdown-item">Accessories/Spare Parts</a></li>
+                                            <li><a href="{% url 'store:shop' %}" class="dropdown-item">View All Products</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="{% url 'store:services' %}">Installations/Repairs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="{% url 'store:shop' %}">All Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="{% url 'store:contact' %}">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% if messages %}
+            <div class="container mt-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="text-white py-5 mt-5" style="background: {{ footer_bg_color }};">
+        <div class="container">
+            <style>
+                .footer-heading { color: {{ footer_heading_color }}; }
+            </style>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="mb-3 footer-heading">ABOUT {{ site_name|upper }}</h5>
+                    <p>{{ footer_about_text|default:"Premium outdoor and camping equipment for all your adventures. Quality products for every outdoor experience." }}</p>
+                    <p>
+                        <strong>Address:</strong> {{ site_address|default:"Nairobi, Kenya" }}<br>
+                        <strong>Email:</strong> {{ contact_email|default:"info@mustekea.co.ke" }}<br>
+                        <strong>Phone:</strong> {{ contact_phone|default:"+254 700 000000" }}
+                    </p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5 class="mb-3 footer-heading">CUSTOMER CARE</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">FAQs</a></li>
+                        <li><a href="#" class="text-white">Shipping</a></li>
+                        <li><a href="#" class="text-white">Track My Order</a></li>
+                        <li><a href="#" class="text-white">Returns</a></li>
+                        <li><a href="#" class="text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-white">Be Our Stockist</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5 class="mb-3 footer-heading">PRIVACY & TERMS</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Refund Policy</a></li>
+                        <li><a href="#" class="text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-white">Terms of Use</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5 class="mb-3 footer-heading">STAY IN TOUCH</h5>
+                    <div class="d-flex">
+                        {% if site_settings.facebook_url %}
+                            <a href="{{ site_settings.facebook_url }}" class="text-white me-2" target="_blank"><i class="fab fa-facebook-f fa-lg"></i></a>
+                        {% else %}
+                            <a href="#" class="text-white me-2"><i class="fab fa-facebook-f fa-lg"></i></a>
+                        {% endif %}
+                        {% if site_settings.instagram_url %}
+                            <a href="{{ site_settings.instagram_url }}" class="text-white me-2" target="_blank"><i class="fab fa-instagram fa-lg"></i></a>
+                        {% else %}
+                            <a href="#" class="text-white me-2"><i class="fab fa-instagram fa-lg"></i></a>
+                        {% endif %}
+                        {% if site_settings.twitter_url %}
+                            <a href="{{ site_settings.twitter_url }}" class="text-white me-2" target="_blank"><i class="fab fa-twitter fa-lg"></i></a>
+                        {% else %}
+                            <a href="#" class="text-white me-2"><i class="fab fa-twitter fa-lg"></i></a>
+                        {% endif %}
+                        {% if site_settings.linkedin_url %}
+                            <a href="{{ site_settings.linkedin_url }}" class="text-white me-2" target="_blank"><i class="fab fa-linkedin fa-lg"></i></a>
+                        {% else %}
+                            <a href="#" class="text-white me-2"><i class="fab fa-linkedin fa-lg"></i></a>
+                        {% endif %}
+                        {% if whatsapp_number %}
+                            <a href="https://wa.me/{{ whatsapp_number }}" class="text-white" target="_blank"><i class="fab fa-whatsapp fa-lg"></i></a>
+                        {% else %}
+                            <a href="#" class="text-white"><i class="fab fa-whatsapp fa-lg"></i></a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <p class="mb-0">&copy; 2024 {{ site_name }}. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    {% if whatsapp_number %}
+    <div class="whatsapp-float">
+        <a href="https://wa.me/{{ whatsapp_number }}?text=Hello! I'm interested in your products." class="whatsapp-button" target="_blank">
+            <i class="fab fa-whatsapp whatsapp-icon"></i>
+            <span class="whatsapp-text">Ask us Anything</span>
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Flash Sale Popup -->
+    {% if active_flash_sale %}
+    <div class="flash-sale-popup" id="flashSalePopup" style="background-color: {{ active_flash_sale.background_color|default:'#ff0000' }};">
+        <div class="flash-sale-content">
+            <button class="flash-sale-close" onclick="closeFlashSalePopup()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="flash-sale-badge">
+                <i class="fas fa-bolt"></i> FLASH SALE
+            </div>
+            <h3 class="flash-sale-title">{{ active_flash_sale.name }}</h3>
+            <p class="flash-sale-discount">{{ active_flash_sale.discount_percentage }}% OFF</p>
+            <p class="flash-sale-description">{{ active_flash_sale.description|default:"Limited time offer!" }}</p>
+            <a href="{% url 'store:shop' %}" class="flash-sale-btn">Shop Now</a>
+            <div class="flash-sale-timer">
+                <span id="flashSaleTimer" data-end-time="{{ active_flash_sale.end_time|date:'Y-m-d H:i:s' }}">Loading...</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Promotional Popup -->
+    {% if enable_promo_popup %}
+    <div class="promo-popup" id="promoPopup" style="background-color: {{ promo_background_color|default:'#000000' }};">
+        <div class="promo-content">
+            <button class="promo-close" onclick="closePromoPopup()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="promo-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2 class="promo-title">{{ promo_title|default:"EXCLUSIVE ONLINE DEAL" }}</h2>
+            <p class="promo-message">{{ promo_message|default:"Buy any 2 camping items and get 15% OFF automatically at checkout!" }}</p>
+            <a href="{% url 'store:shop' %}" class="promo-btn" style="background-color: {{ promo_button_color|default:'#dc3545' }};">
+                {{ promo_button_text|default:"SHOP NOW" }}
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Chatbot Widget -->
+    <div class="chatbot-widget">
+        <div class="chatbot-button" onclick="toggleChatbot()">
+            <i class="fas fa-comments"></i>
+            <span class="chatbot-badge">3</span>
+        </div>
+        <div class="chatbot-window" id="chatbotWindow">
+            <div class="chatbot-header">
+                <div class="chatbot-header-content">
+                    <div class="chatbot-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">Mustek Assistant</h6>
+                        <small class="text-success">Online</small>
+                    </div>
+                </div>
+                <button class="chatbot-close" onclick="toggleChatbot()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="chatbot-message bot">
+                    <div class="message-content">
+                        <p>Hello! I'm your Mustek Assistant. How can I help you today?</p>
+                        <small class="message-time">Just now</small>
+                    </div>
+                </div>
+                <div class="chatbot-message bot">
+                    <div class="message-content">
+                        <p>I can help you with:</p>
+                        <ul>
+                            <li>Product information and availability</li>
+                            <li>Service bookings and repairs</li>
+                            <li>Order tracking</li>
+                            <li>General inquiries</li>
+                        </ul>
+                        <small class="message-time">Just now</small>
+                    </div>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* WhatsApp Floating Button Styles */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        
+        .whatsapp-button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+            padding: 12px 24px;
+            border-radius: 50px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .whatsapp-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(37, 211, 102, 0.5);
+            text-decoration: none;
+            color: white;
+        }
+        
+        .whatsapp-icon {
+            color: white;
+            font-size: 24px;
+        }
+        
+        .whatsapp-text {
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Flash Sale Popup Styles */
+        .flash-sale-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: flashSaleIn 0.5s ease-out;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        @keyframes flashSaleIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .flash-sale-content {
+            padding: 30px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .flash-sale-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .flash-sale-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .flash-sale-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .flash-sale-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .flash-sale-discount {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 15px 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .flash-sale-description {
+            font-size: 16px;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .flash-sale-btn {
+            display: inline-block;
+            background: white;
+            color: #333;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .flash-sale-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            color: #333;
+        }
+
+        .flash-sale-timer {
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        /* Promotional Popup Styles */
+        .promo-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3000;
+            border-radius: 20px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            animation: promoIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 500px;
+            width: 95%;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes promoIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5) rotate(-5deg);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+            }
+        }
+
+        .promo-content {
+            padding: 40px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .promo-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 18px;
+        }
+
+        .promo-close:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: rotate(90deg);
+        }
+
+        .promo-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 36px;
+            animation: iconPulse 2s infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+            }
+        }
+
+        .promo-title {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
+        }
+
+        .promo-message {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            opacity: 0.95;
+            line-height: 1.5;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .promo-btn {
+            display: inline-block;
+            color: white;
+            padding: 16px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .promo-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        /* Chatbot Widget Styles */
+        .chatbot-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .chatbot-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .chatbot-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(40, 167, 69, 0.5);
+        }
+        
+        .chatbot-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+        
+        .chatbot-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chatbot-window.active {
+            display: flex;
+        }
+        
+        .chatbot-header {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chatbot-header-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chatbot-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chatbot-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .chatbot-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+        
+        .chatbot-message {
+            margin-bottom: 15px;
+            display: flex;
+        }
+        
+        .chatbot-message.user {
+            justify-content: flex-end;
+        }
+        
+        .chatbot-message.bot {
+            justify-content: flex-start;
+        }
+        
+        .message-content {
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            position: relative;
+        }
+        
+        .chatbot-message.user .message-content {
+            background: #28a745;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+        
+        .chatbot-message.bot .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .message-content p {
+            margin: 0 0 5px 0;
+        }
+        
+        .message-content ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            display: block;
+            margin-top: 5px;
+        }
+        
+        .chatbot-input {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chatbot-input input {
+            flex: 1;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 10px 15px;
+            outline: none;
+        }
+        
+        .chatbot-input input:focus {
+            border-color: #28a745;
+        }
+        
+        .chatbot-input button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chatbot-input button:hover {
+            background: #1e7e34;
+        }
+    </style>
+
+    <script>
+        function toggleChatbot() {
+            const chatbotWindow = document.getElementById('chatbotWindow');
+            chatbotWindow.classList.toggle('active');
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatbotInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                // Add user message
+                addMessage(message, 'user');
+                input.value = '';
+                
+                // Simulate bot response
+                setTimeout(() => {
+                    const response = getBotResponse(message);
+                    addMessage(response, 'bot');
+                }, 1000);
+            }
+        }
+        
+        function addMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatbotMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chatbot-message ${sender}`;
+            
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <p>${text}</p>
+                    <small class="message-time">${time}</small>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function getBotResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Product-related queries
+            if (lowerMessage.includes('product') || lowerMessage.includes('item')) {
+                return "We offer a wide range of products including outdoor equipment, camping gear, power solutions, and technology products. You can browse our products in the Shop section or search for specific items.";
+            }
+            
+            // Service-related queries
+            if (lowerMessage.includes('service') || lowerMessage.includes('repair') || lowerMessage.includes('installation')) {
+                return "We provide professional installation and repair services including power backup, UPS, refrigeration, electrical work, CCTV installation, and more. Visit our Installations/Repairs section to book a service.";
+            }
+            
+            // Order-related queries
+            if (lowerMessage.includes('order') || lowerMessage.includes('track') || lowerMessage.includes('delivery')) {
+                return "You can track your orders by logging into your account and visiting the Profile section. If you need help with a specific order, please provide your order number.";
+            }
+            
+            // Contact-related queries
+            if (lowerMessage.includes('contact') || lowerMessage.includes('phone') || lowerMessage.includes('email') || lowerMessage.includes('address')) {
+                return "You can reach us at:\n• Phone: +254 700 000 000\n• Email: info@mustekea.co.ke\n• Address: Nairobi, Kenya\n\nOr use the Contact form on our website.";
+            }
+            
+            // Price-related queries
+            if (lowerMessage.includes('price') || lowerMessage.includes('cost') || lowerMessage.includes('payment')) {
+                return "Our prices vary by product and service. Service bookings start at KES 3,750 + VAT. We accept M-Pesa, card payments, bank transfers, and cash.";
+            }
+            
+            // Default response
+            return "I'd be happy to help you with that! Could you please provide more details about what you're looking for? I can assist with products, services, orders, or general inquiries.";
+        }
+
+        // Flash Sale Popup Functions
+        function closeFlashSalePopup() {
+            const popup = document.getElementById('flashSalePopup');
+            if (popup) {
+                popup.style.display = 'none';
+                // Set cookie to remember user closed it
+                document.cookie = 'flashSaleClosed=true; path=/; max-age=3600'; // 1 hour
+            }
+        }
+
+        // Promotional Popup Functions
+        function closePromoPopup() {
+            const popup = document.getElementById('promoPopup');
+            if (popup) {
+                popup.style.display = 'none';
+                // Set cookie to remember user closed it
+                document.cookie = 'promoClosed=true; path=/; max-age=86400'; // 24 hours
+            }
+        }
+
+        function updateFlashSaleTimer() {
+            const timerElement = document.getElementById('flashSaleTimer');
+            if (!timerElement) return;
+
+            // Get end time from data attribute
+            const endTimeStr = timerElement.dataset.endTime;
+            if (!endTimeStr) return;
+
+            const endTime = new Date(endTimeStr);
+            const now = new Date();
+            const diff = endTime - now;
+
+            if (diff <= 0) {
+                timerElement.innerHTML = 'Sale Ended!';
+                return;
+            }
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            timerElement.innerHTML = `Ends in: ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        // Initialize flash sale popup
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user has already closed the popup
+            if (document.cookie.includes('flashSaleClosed=true')) {
+                const popup = document.getElementById('flashSalePopup');
+                if (popup) {
+                    popup.style.display = 'none';
+                }
+            } else {
+                // Start timer if popup exists
+                const timerElement = document.getElementById('flashSaleTimer');
+                if (timerElement) {
+                    updateFlashSaleTimer();
+                    setInterval(updateFlashSaleTimer, 1000);
+                }
+            }
+
+            // Check if user has already closed the promo popup
+            if (document.cookie.includes('promoClosed=true')) {
+                const promoPopup = document.getElementById('promoPopup');
+                if (promoPopup) {
+                    promoPopup.style.display = 'none';
+                }
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/main.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

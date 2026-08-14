@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Card - Booking #{{ booking.id }} - Mustek East Africa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; }
+            .card { border: none !important; box-shadow: none !important; }
+        }
+        .print-only { display: none; }
+        .company-header {
+            background: linear-gradient(135deg, #1e4d7c 0%, #153a5f 100%);
+            color: white;
+        }
+        .job-card-header {
+            background-color: #f8f9fa;
+            border-left: 4px solid #1e4d7c;
+        }
+        .signature-section {
+            border-top: 1px solid #dee2e6;
+            margin-top: 40px;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <div class="card shadow">
+            <!-- Header -->
+            <div class="card-body">
+                <div class="row company-header p-4 mb-4 rounded">
+                    <div class="col-md-8">
+                        <h2 class="mb-1"><i class="fas fa-cogs me-2"></i>Mustek East Africa</h2>
+                        <p class="mb-0">Professional Installation & Repair Services</p>
+                        <small>Nairobi, Kenya | Phone: +254 700 000 000 | Email: info@mustekea.co.ke</small>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <h4 class="mb-0">JOB CARD</h4>
+                        <small class="text-white-50">#{{ booking.id }}</small>
+                    </div>
+                </div>
+
+                <!-- Job Card Details -->
+                <div class="job-card-header p-3 mb-4 rounded">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold mb-2">Customer Details</h6>
+                            <p class="mb-1"><strong>Name:</strong> {{ booking.customer.get_full_name }}</p>
+                            <p class="mb-1"><strong>Phone:</strong> {{ booking.phone }}</p>
+                            <p class="mb-1"><strong>Address:</strong> {{ booking.address }}</p>
+                            <p class="mb-0"><strong>City:</strong> {{ booking.city }}</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h6 class="fw-bold mb-2">Job Details</h6>
+                            <p class="mb-1"><strong>Date:</strong> {{ booking.scheduled_date|date:"F j, Y" }}</p>
+                            <p class="mb-1"><strong>Time:</strong> {{ booking.scheduled_date|date:"H:i" }}</p>
+                            <p class="mb-1"><strong>Service:</strong> {{ booking.service.name }}</p>
+                            <p class="mb-0"><strong>Status:</strong> {{ booking.get_status_display }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Description -->
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-2">Service Description</h6>
+                    <p class="text-muted">{{ booking.service.description }}</p>
+                    {% if booking.notes %}
+                    <p class="text-muted"><strong>Customer Notes:</strong> {{ booking.notes }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Technician Information -->
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-2">Assigned Technician</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Name:</strong> {{ booking.technician.user.get_full_name }}</p>
+                            <p class="mb-1"><strong>Phone:</strong> {{ booking.technician.phone }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Rating:</strong> 
+                                <span class="text-warning">
+                                    {% for i in booking.technician.rating|floatformat:0 %}<i class="fas fa-star"></i>{% endfor %}
+                                </span>
+                            </p>
+                            <p class="mb-0"><strong>Total Jobs:</strong> {{ booking.technician.total_jobs }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Checklist -->
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-2">Job Checklist</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Arrive at customer location</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Assess the issue/service required</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Perform service/repair</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Test functionality</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Clean up work area</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Explain work to customer</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Obtain customer signature</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Signature Section -->
+                <div class="signature-section">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="text-center">
+                                <p class="mb-4">__________________________</p>
+                                <p class="fw-bold">Technician Signature</p>
+                                <p class="small text-muted">{{ booking.technician.user.get_full_name }}</p>
+                                <p class="small text-muted">Date: _______________</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-center">
+                                <p class="mb-4">__________________________</p>
+                                <p class="fw-bold">Customer Signature</p>
+                                <p class="small text-muted">Date: _______________</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Print Button -->
+                <div class="no-print mt-4 text-center">
+                    <button onclick="window.print()" class="btn btn-primary btn-lg">
+                        <i class="fas fa-print me-2"></i>Print Job Card
+                    </button>
+                    <a href="{% url 'store:booking_details' booking.id %}" class="btn btn-secondary btn-lg ms-2">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Booking
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-4 text-muted small no-print">
+            <p>Mustek East Africa - Your Trusted Partner for Quality Services</p>
+            <p>www.mustekea.co.ke | info@mustekea.co.ke | +254 700 000 000</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
