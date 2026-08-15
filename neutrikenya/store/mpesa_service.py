@@ -108,7 +108,15 @@ class MpesaService:
         if not callback_url:
             callback_url = self.config.callback_url
             if not callback_url:
-                raise ValueError("Callback URL is required. Please set it in M-Pesa configuration or provide it as parameter.")
+                # Use default callback URL based on ALLOWED_HOSTS
+                from django.conf import settings
+                if settings.ALLOWED_HOSTS:
+                    # Use the first non-localhost host
+                    domain = next((host for host in settings.ALLOWED_HOSTS if host not in ['localhost', '127.0.0.1']), None)
+                    if domain:
+                        callback_url = f"https://{domain}/mpesa/callback/"
+                if not callback_url:
+                    raise ValueError("Callback URL is required. Please set it in M-Pesa configuration or provide it as parameter.")
         
         # Validate callback URL - M-Pesa requires publicly accessible URLs
         if 'localhost' in callback_url or '127.0.0.1' in callback_url:
