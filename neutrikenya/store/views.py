@@ -508,7 +508,87 @@ def signup(request):
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
             login(request, user)
-            messages.success(request, "Registration successful! Welcome to Mustek East Africa.")
+            
+            # Send confirmation email
+            try:
+                subject = 'Welcome to Supertek East Africa!'
+                from_email = settings.DEFAULT_FROM_EMAIL if hasattr(settings, 'DEFAULT_FROM_EMAIL') else 'noreply@supertek.onrender.com'
+                to_email = user.email
+                
+                # Create email content
+                context = {
+                    'user': user,
+                    'username': username,
+                }
+                
+                text_content = f"""
+Dear {username},
+
+Welcome to Supertek East Africa!
+
+Thank you for creating an account with us. Your account has been successfully created.
+
+You can now:
+- Browse our extensive collection of outdoor equipment
+- Place orders and track your shipments
+- Book services for installations and repairs
+- Manage your profile and preferences
+
+If you have any questions, please don't hesitate to contact us.
+
+Best regards,
+The Supertek East Africa Team
+"""
+                
+                html_content = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ background-color: #333; color: white; padding: 20px; text-align: center; }}
+        .content {{ padding: 20px; background-color: #f9f9f9; }}
+        .footer {{ background-color: #333; color: white; padding: 20px; text-align: center; margin-top: 20px; }}
+        .button {{ display: inline-block; padding: 10px 20px; background-color: #333; color: white; text-decoration: none; margin: 10px 0; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to Supertek East Africa!</h1>
+        </div>
+        <div class="content">
+            <p>Dear {username},</p>
+            <p>Thank you for creating an account with us. Your account has been successfully created.</p>
+            <p>You can now:</p>
+            <ul>
+                <li>Browse our extensive collection of outdoor equipment</li>
+                <li>Place orders and track your shipments</li>
+                <li>Book services for installations and repairs</li>
+                <li>Manage your profile and preferences</li>
+            </ul>
+            <p>If you have any questions, please don't hesitate to contact us.</p>
+            <p><a href="https://supertek.onrender.com" class="button">Visit Our Store</a></p>
+        </div>
+        <div class="footer">
+            <p>Best regards,<br>The Supertek East Africa Team</p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+                
+                email = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+                email.attach_alternative(html_content, "text/html")
+                email.send()
+                
+                messages.success(request, "Registration successful! Welcome to Supertek East Africa. A confirmation email has been sent to your email address.")
+            except Exception as e:
+                # Log the error but don't fail the registration
+                print(f"Error sending confirmation email: {e}")
+                messages.success(request, "Registration successful! Welcome to Supertek East Africa.")
+            
             return redirect('store:home')
     else:
         form = SignUpForm()
