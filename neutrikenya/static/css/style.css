@@ -18,6 +18,15 @@ body {
     line-height: 1.6;
 }
 
+/* Utility classes for mobile responsiveness */
+.whitespace-nowrap {
+    white-space: nowrap;
+}
+
+.h-10 {
+    height: 2.5rem;
+}
+
 a {
     text-decoration: none;
     color: var(--primary-color);

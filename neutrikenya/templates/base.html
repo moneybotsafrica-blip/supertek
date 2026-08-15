@@ -16,14 +16,14 @@
 <body>
     <header>
         <!-- Top Bar -->
-        <div class="top-bar bg-dark text-white py-2">
-            <div class="container d-flex justify-content-between align-items-center">
-                <div>
-                    <span class="me-3">{{ header_message_1|default:"Orders ship next day" }}</span>
-                    <span>{{ header_message_2|default:"Logistics info updates within 1-2 working days" }}</span>
+        <div class="top-bar bg-dark text-white h-10 py-2">
+            <div class="container d-flex justify-content-between align-items-center w-100 px-4">
+                <div class="d-none d-md-block">
+                    <span class="me-3 whitespace-nowrap">{{ header_message_1|default:"Orders ship next day" }}</span>
+                    <span class="whitespace-nowrap">{{ header_message_2|default:"Logistics info updates within 1-2 working days" }}</span>
                 </div>
-                <div>
-                    <div class="dropdown d-inline-block me-3">
+                <div class="d-flex align-items-center">
+                    <div class="dropdown d-inline-block me-3 d-none d-md-block">
                         <button class="btn btn-sm btn-dark dropdown-toggle currency-selector" type="button" id="currencyDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             <span id="selected-currency-flag" class="flag-icon flag-icon-ke">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 640 480">
@@ -42,7 +42,7 @@
                                     <path id="c" d="M266.2 204v71.7l-19.3.3s-89.9 40.4-93 40.4c-3 0 3.3-36.2 3.3-36.2l21.8-6.7-22.4-6.7s-9.3-47.8-4.5-59.3c8.8-17.3 42-4.5 42-4.5z" fill="#000"/>
                                     <use width="100%" height="100%" transform="matrix(-1 0 0 1 640 0)" xlink:href="#c"/>
                                     <g fill="#fff">
-                                    <path d="M590.5 173.3a15.3 15.3 0 0 1-30.7 0 15.3 15.3 0 0 1 30.7 0z"/>
+                                    <path d="M590.5 173.3a15.3 15.0 0 0 1-30.7 0 15.3 15.3 0 0 1 30.7 0z"/>
                                     <path d="M580 173.3a5 5 0 0 1-10 0 5 5 0 0 1 10 0z"/>
                                     </g>
                                     <g fill="#fff">
@@ -144,18 +144,18 @@
                         </ul>
                     </div>
                     {% if user.is_authenticated %}
-                    <a href="{% url 'store:profile' %}" class="text-decoration-none text-white me-3">
+                    <a href="{% url 'store:profile' %}" class="text-decoration-none text-white me-3 whitespace-nowrap">
                         <i class="fas fa-user me-1"></i> My Account
                     </a>
-                    <a href="{% url 'logout' %}" class="text-decoration-none text-white me-3">
+                    <a href="{% url 'logout' %}" class="text-decoration-none text-white me-3 whitespace-nowrap">
                         <i class="fas fa-sign-out-alt me-1"></i> Logout
                     </a>
                     {% else %}
-                    <a href="{% url 'login' %}" class="text-decoration-none text-white me-3">
+                    <a href="{% url 'login' %}" class="text-decoration-none text-white me-3 whitespace-nowrap">
                         <i class="fas fa-user me-1"></i> My Account
                     </a>
                     {% endif %}
-                    <a href="{% url 'store:cart' %}" class="text-decoration-none text-white position-relative">
+                    <a href="{% url 'store:cart' %}" class="text-decoration-none text-white d-inline-flex align-items-center position-relative whitespace-nowrap">
                         <i class="fas fa-shopping-cart me-1"></i> Cart
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
                             {% if request.user.is_authenticated or request.session.session_id %}
